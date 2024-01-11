@@ -18,6 +18,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "document.hxx"
 #include <algorithm>
+#include <regex>
 
 
 
@@ -98,10 +99,35 @@ void Document::removeBackwardLink(Document* document){
   backwardLinks.erase(document);
 }
 
+
+
 std::set<Document*> Document::getMentionedDocuments(std::set<Document*> allDocuments){
 
+  std::set<Document*> output;
   
+  std::regex pattern("\\{\\{([^\\}]+)\\}\\}");
+  std::smatch match;
+
+  std::sregex_iterator regIterator(contents.begin(), contents.end(), pattern);
+  std::sregex_iterator endIterator;
 
 
+  for(;regIterator!=endIterator; regIterator++){
+    
+    // https://en.cppreference.com/w/cpp/language/lambda
+    auto sameTitle=[&](Document* in){
+      return (in->getTitle())==(regIterator->str(1));
+    };
+
+    // https://en.cppreference.com/w/cpp/algorithm/find
+    //if the title exsits as a title on any document, add it to the output
+    auto result=std::find_if(allDocuments.begin(), allDocuments.end(), sameTitle);
+    if(result!=allDocuments.end()){
+      output.insert(*result);
+    }
+ 
+  }
+
+  return output;
 }
 
