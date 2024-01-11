@@ -3,7 +3,7 @@
 
 CXX= g++
 CXXFLAGS= -std=c++17
-OBJFILES= bin/main.o bin/licence.o bin/mainClass.o
+OBJFILES= bin/main.o bin/licence.o bin/mainClass.o bin/document.o
 TARGET= bin/smalttext
 
 
@@ -28,7 +28,7 @@ bin/licence.o: src/licence.cxx
 	@echo LICENCE:
 	$(CXX) $(CXXFLAGS) src/licence.cxx -c -o bin/licence.o
 	
-bin/mainClass.o: src/mainClass.cxx src/mainClass.hxx
+bin/mainClass.o: src/mainClass.cxx src/mainClass.hxx src/document/document.hxx
 	@echo MAIN CLASS:
 	$(CXX) $(CXXFLAGS) src/mainClass.cxx -c -o bin/mainClass.o
 

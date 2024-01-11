@@ -15,13 +15,15 @@ You should have received a copy of the GNU General Public License along with sma
 If not, see <https://www.gnu.org/licenses/>.
 */
 
+#pragma once
 
+#include "document/document.hxx"
 
 class MainClass{
 
   private:
     //variables:
-
+    std::set<Document*> documents;
     
     
   public:
