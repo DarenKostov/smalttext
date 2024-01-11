@@ -27,10 +27,10 @@ class Document{
     std::string contents;
   
     //what this document is linking to
-    std::set<Document*> linkingTo;
+    std::set<Document*> backwardLinks;
 
     //what document are linking to this file
-    std::set<Document*> linkingFrom;
+    std::set<Document*> forwardLinks;
 
   public:
 
@@ -67,10 +67,10 @@ class Document{
     std::string getContents();
   
     //gives you the documents linking to the document
-    std::string getBackwardLinks();
+    std::set<Document*>  getBackwardLinks();
     
     //gives you what documents this document is linking to
-    std::string getForwardLinks();
+    std::set<Document*>  getForwardLinks();
     
 
   
