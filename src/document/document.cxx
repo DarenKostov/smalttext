@@ -17,6 +17,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 
 #include "document.hxx"
+#include <algorithm>
 
 
 
@@ -49,8 +50,27 @@ void Document::setContents(std::string stuff){
   contents=stuff;
 }
 
-void Document::resetLinks(){
-  //TODO reset links
+void Document::resetLinks(std::set<Document*> allDocuments){
+
+  auto oldForwardLinks=forwardLinks;
+  forwardLinks=getMentionedDocuments(allDocuments);
+
+  std::set<Document*> removedForwardLinks;
+  std::set<Document*> addedForwardLinks;
+
+  //https://en.cppreference.com/w/cpp/algorithm/set_difference  
+  std::set_difference(oldForwardLinks.begin(), oldForwardLinks.end(), forwardLinks.begin(), forwardLinks.end(), std::inserter(removedForwardLinks, removedForwardLinks.begin()));
+  std::set_difference(forwardLinks.begin(), forwardLinks.end(), oldForwardLinks.begin(), oldForwardLinks.end(), std::inserter(addedForwardLinks, addedForwardLinks.begin()));
+  
+  //fix the backward links of the documents we were linking to forwardly
+  for(auto document : addedForwardLinks){
+    document->addBackwardLink(this);
+  }
+  for(auto document : removedForwardLinks){
+    document->removeBackwardLink(this);
+  }
+
+
 }
 
 std::string Document::getTitle(){
@@ -70,5 +90,18 @@ std::set<Document*>  Document::getForwardLinks(){
 }
 
 
+void Document::addBackwardLink(Document* document){
+  backwardLinks.insert(document);
+}
 
+void Document::removeBackwardLink(Document* document){
+  backwardLinks.erase(document);
+}
+
+std::set<Document*> Document::getMentionedDocuments(std::set<Document*> allDocuments){
+
+  
+
+
+}
 

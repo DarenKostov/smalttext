@@ -54,8 +54,8 @@ class Document{
     //sets the contents of the document
     void setContents(std::string);
 
-    //resets the links from this document (what this document links to)
-    void resetLinks();
+    //resets the links from this document (what this document links to); provide it with all of the existing documents
+    void resetLinks(std::set<Document*>);
 
 
     //==getters
@@ -71,9 +71,22 @@ class Document{
     
     //gives you what documents this document is linking to
     std::set<Document*>  getForwardLinks();
-    
+
+
+    //==obtainers? adders? removers? misc?
+  
+    //gives you all of the mentioned documents; provide it with all of the existing documents
+    std::set<Document*> getMentionedDocuments(std::set<Document*>);
+
+    //adds a backward link to this document (if it doesnt exist)
+    void addBackwardLink(Document*);
+  
+    //removes a backward link to this document (if it exists)
+    void removeBackwardLink(Document*);
+
+
 
   
-
+    
 };
 
