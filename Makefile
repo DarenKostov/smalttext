@@ -28,11 +28,13 @@ bin/licence.o: src/licence.cxx
 	@echo LICENCE:
 	$(CXX) $(CXXFLAGS) src/licence.cxx -c -o bin/licence.o
 	
-
-
 bin/mainClass.o: src/mainClass.cxx src/mainClass.hxx
 	@echo MAIN CLASS:
 	$(CXX) $(CXXFLAGS) src/mainClass.cxx -c -o bin/mainClass.o
+
+bin/document.o: src/document/document.cxx src/document/document.cxx
+	@echo DOCUMENT CLASS:
+	$(CXX) $(CXXFLAGS) src/document/document.cxx -c -o bin/document.o
 
 
 
