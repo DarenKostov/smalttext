@@ -41,7 +41,9 @@ void MainClass::startProgram(){
   
   for(auto document : documents){
     document->resetLinks(documents);
-    
+  }
+
+  for(auto document : documents){
     std::cout << document->getTitle() << ":\n";
 
     std::cout << "\tForward Links:\n";
