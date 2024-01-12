@@ -18,8 +18,6 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "document.hxx"
 #include <algorithm>
-#include <iostream>
-#include <ostream>
 #include <regex>
 
 
@@ -68,7 +66,6 @@ void Document::resetLinks(std::set<Document*> allDocuments){
   //fix the backward links of the documents we were linking to forwardly
   for(auto document : addedForwardLinks){
     document->addBackwardLink(this);
-    std::cout << title << "\n" << std::flush;
   }
   for(auto document : removedForwardLinks){
     document->removeBackwardLink(this);
