@@ -33,7 +33,7 @@ void MainClass::startProgram(){
   for(int i=0; i<10; i++){
     auto document=new Document("Document "+std::to_string(i));
     document->setContents("This is the text inside Document "+std::to_string(i)
-      +"\nThis Document link to {{Document "+std::to_string(i)+"}}\n");
+      +"\nThis Document link to {{Document "+std::to_string((i+1)%10)+"}}\n");
    
     documents.insert(document);
   
@@ -50,8 +50,8 @@ void MainClass::startProgram(){
     }
 
     std::cout << "\tBackward Links:\n";
-    for(auto forwardckward : document->getBackwardLinks()){
-      std::cout << "\t\t" << forwardckward->getTitle() << "\n";
+    for(auto forward : document->getBackwardLinks()){
+      std::cout << "\t\t" << forward->getTitle() << "\n";
     }
 
 
