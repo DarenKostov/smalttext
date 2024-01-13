@@ -24,7 +24,7 @@ class MainClass{
   private:
     //variables:
     std::set<Document*> documents;
-    
+    std::string workingPath;
     
   public:
 
@@ -37,4 +37,16 @@ class MainClass{
     //the function that does all the logic, basically the main function
     void startProgram();
 
+
+  private:
+    // bool loadFile(std::string);
+
+    //loads a document from a file path relative to the working path
+    bool loadDocument(std::string);
+
+  
+    //makes a new document in the directory whose path is the working path
+    bool makeDocument(std::string);
+  
+  
 };

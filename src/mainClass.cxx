@@ -17,32 +17,46 @@ If not, see <https://www.gnu.org/licenses/>.
 
 
 #include "mainClass.hxx"
+#include "document/document.hxx"
 #include <iostream>
+#include <regex>
 #include <string>
+#include <filesystem>
+#include <fstream>
 
 
 MainClass::MainClass(){
+
+  // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90050
+  workingPath=std::filesystem::current_path().generic_string();
+  workingPath+="/example";
+
 }
 MainClass::~MainClass(){
+
+  //make sure we are not making mery leaks  
+  for(auto document : documents){
+    delete document;
+  }
+
+  
 }
 
 
 
 void MainClass::startProgram(){
 
-  for(int i=0; i<10; i++){
-    auto document=new Document("Document "+std::to_string(i));
-    document->setContents("This is the text inside Document "+std::to_string(i)
-      +"\nThis Document link to {{Document "+std::to_string((i+1)%10)+"}}\n");
-   
-    documents.insert(document);
   
+  for (auto file : std::filesystem::directory_iterator(workingPath)) {
+    loadDocument(file.path());
   }
-  
-  for(auto document : documents){
+
+  for (auto document : documents) {
     document->resetLinks(documents);
   }
 
+  
+  
   for(auto document : documents){
     std::cout << document->getTitle() << ":\n";
 
@@ -55,11 +69,60 @@ void MainClass::startProgram(){
     for(auto forward : document->getBackwardLinks()){
       std::cout << "\t\t" << forward->getTitle() << "\n";
     }
-
-
-    
   }
 
 }
+
+bool MainClass::loadDocument(std::string relativePath){
+  
+  std::string path=relativePath;
+  std::string title="";
+  std::string contents="";
+  std::string firstLine="";
+  std::string tagLine="";
+  std::vector<std::string> tags;
+  std::ifstream inputFileStream(path);
+
+  if(inputFileStream.bad()){
+    return false;
+  }
+
+  std::getline(inputFileStream, firstLine);
+
+  if(firstLine!="<SMALTTEXT>"){
+    return false;
+  }  
+  
+  std::getline(inputFileStream, tagLine);
+  std::getline(inputFileStream, title);
+  std::getline(inputFileStream, contents, '\0');
+  inputFileStream.close();
+
+  
+  auto document=new Document(title, contents);
+
+  documents.insert(document);
+  
+  return true;
+}
+
+
+bool MainClass::makeDocument(std::string name){
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
