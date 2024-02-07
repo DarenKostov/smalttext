@@ -1,7 +1,7 @@
 #!/bin/sh
 
-options="$1"
-# options="music\ncar\nverb\ngrass field\netc"
+# options="$1"
+options="music\ncar\nverb\ngrass field\netc"
 
 # -c     Centered
 # -bw 5  Border width of 5 pixels

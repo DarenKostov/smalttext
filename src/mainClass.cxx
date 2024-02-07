@@ -18,11 +18,13 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "mainClass.hxx"
 #include "document/document.hxx"
+#include <cctype>
 #include <iostream>
 #include <regex>
 #include <string>
 #include <filesystem>
 #include <fstream>
+#include <tuple>
 
 
 MainClass::MainClass(){
@@ -73,13 +75,15 @@ void MainClass::startProgram(){
 
 }
 
-bool MainClass::loadDocument(std::string relativePath){
+bool MainClass::loadDocument(std::string path){
   
-  std::string path=relativePath;
+  std::string identifier="";
   std::string title="";
-  std::string contents="";
-  std::string firstLine="";
   std::string tagLine="";
+  std::string preSetting="";
+  std::string postSetting="";
+  std::string description="";
+  std::string contents="";
   std::vector<std::string> tags;
   std::ifstream inputFileStream(path);
 
@@ -87,15 +91,36 @@ bool MainClass::loadDocument(std::string relativePath){
     return false;
   }
 
-  std::getline(inputFileStream, firstLine);
+  std::getline(inputFileStream, identifier);
 
-  if(firstLine!="<SMALTTEXT>"){
+  if(identifier!="<SMALTTEXT:0.0.0>"){
+  // if(!(identifier=="<SMALTTEXT:0.0.0>" || identifier=="<SMALTTEXT>")){
     return false;
   }  
   
-  std::getline(inputFileStream, tagLine);
-  std::getline(inputFileStream, title);
+  
+  inputFileStream.ignore(100, '=');
+  inputFileStream.ignore(100, ' ');
+  std::getline(inputFileStream, title, '\n');
+  
+  inputFileStream.ignore(100, '=');
+  inputFileStream.ignore(100, ' ');
+  std::getline(inputFileStream, tagLine, '\n');
+
+  inputFileStream.ignore(100, '=');
+  inputFileStream.ignore(100, ' ');
+  std::getline(inputFileStream, preSetting, '\n');
+  
+  inputFileStream.ignore(100, '=');
+  inputFileStream.ignore(100, ' ');
+  std::getline(inputFileStream, postSetting, '\n');
+  
+  inputFileStream.ignore(100, '=');
+  inputFileStream.ignore(100, ' ');
+  std::getline(inputFileStream, description, '\n');
+  
   std::getline(inputFileStream, contents, '\0');
+
   inputFileStream.close();
 
   
@@ -107,14 +132,79 @@ bool MainClass::loadDocument(std::string relativePath){
 }
 
 
-bool MainClass::makeDocument(std::string name){
+bool MainClass::makeDocument(std::string title){
+  
+  std::string supposedName;
+  std::ifstream fileStream;
+
+  //check which file path would be the best, check for duplicates, etc
+  for(int i=0;; i++){
+      
+    std::string append="-"+std::to_string(i);
+    if(i==0){
+      append="";
+    }
+  
+    supposedName=makeSuitableForFileName(title+append);
+    fileStream.open(workingPath+"/"+supposedName);
+    
+    //does the file exist?
+    if(fileStream.good()){
+
+      std::string line="";
+      std::getline(fileStream, line);
+      std::getline(fileStream, line);
+      fileStream.close();
+
+      //does this document have the exact same title?
+      if(title==line){
+        //they do? there is nothing we can do, 2 documents cannot have the same title
+        return false;
+      }
+        //They have diffrent titles, just the same file names?
+        //proceed
+
+    }
+
+    if(i>=999){
+      //if we reach this, we have unreasonably many # of documents with too similar (the same) titles
+      return false;
+    }
+    
+  }
+
+  //create a new file
+  std::ofstream newFileStream(workingPath+"/"+supposedName, std::ios::out);
 
 
-
-
+  
+  
+  return true;
 }
 
 
+std::string MainClass::makeSuitableForFileName(std::string in){
+  std::string out="";
+
+  // // https://en.cppreference.com/w/cpp/algorithm/transform
+  // transform(in.begin(), in.end(), out.begin(), tolower); 
+
+  for(char character : in){
+    character=tolower(character);
+    
+    if(!((character>=48 && character<=57) || (character>=97 && character<=122) || character==95 || character==45 || character==32))
+      continue;
+    
+    if(character==32)
+      character=45;
+    
+    out+=character;
+  }
+  
+  out+=".txt";
+
+  return out;
+}
 
 
 

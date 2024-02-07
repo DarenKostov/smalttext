@@ -39,11 +39,13 @@ class MainClass{
 
 
   private:
+  
+    //turns a string to a suitable name for a file
+    std::string makeSuitableForFileName(std::string);
+  
     // bool loadFile(std::string);
-
     //loads a document from a file path relative to the working path
     bool loadDocument(std::string);
-
   
     //makes a new document in the directory whose path is the working path
     bool makeDocument(std::string);

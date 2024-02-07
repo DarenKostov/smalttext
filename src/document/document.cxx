@@ -18,6 +18,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "document.hxx"
 #include <algorithm>
+#include <iostream>
 #include <regex>
 
 
@@ -105,7 +106,7 @@ std::set<Document*> Document::getMentionedDocuments(std::set<Document*> allDocum
 
   std::set<Document*> output;
   
-  std::regex pattern("\\{\\{([^\\}]+)\\}\\}");
+  std::regex pattern("\\{([^\\}]*)\\{([^\\}]+)\\}([^\\}]*)\\}");
   std::smatch match;
 
   std::sregex_iterator regIterator(contents.begin(), contents.end(), pattern);
@@ -113,10 +114,15 @@ std::set<Document*> Document::getMentionedDocuments(std::set<Document*> allDocum
 
 
   for(;regIterator!=endIterator; regIterator++){
-    
+
+
     // https://en.cppreference.com/w/cpp/language/lambda
     auto sameTitle=[&](Document* in){
-      return (in->getTitle())==(regIterator->str(1));
+      //0 is the whole thing
+      //1 is the tags
+      //2 is the title (thats what we want)
+      //3 is the displayed name
+      return (in->getTitle())==(regIterator->str(2));
     };
 
     // https://en.cppreference.com/w/cpp/algorithm/find
