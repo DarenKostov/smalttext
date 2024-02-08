@@ -38,10 +38,13 @@ class Document{
     //==constructors & deconstructors
   
     //document constructor, requres a title.
-    Document(std::string);
+    Document(const std::string&);
   
     //document constructor, requres a title and contents.
-    Document(std::string, std::string);
+    Document(const std::string&, const std::string&);
+
+    //document constructor, requres a title ann an istream with the contents.
+    Document(const std::string&, std::istream&);
 
     //document deconstructor
     ~Document();
@@ -49,14 +52,16 @@ class Document{
     //==setters
   
     //sets the title of the document
-    void rename(std::string);
-    void setName(std::string);
+    void rename(const std::string&);
+    void setName(const std::string&);
+    void setTitle(const std::string&);
   
     //sets the contents of the document
-    void setContents(std::string);
+    void setContents(const std::string&);
+    void setContents(std::istream&);
 
     //resets the links from this document (what this document links to); provide it with all of the existing documents
-    void resetLinks(std::set<Document*>);
+    void resetLinks(const std::set<Document*>&);
 
 
     //==getters
@@ -77,7 +82,11 @@ class Document{
     //==obtainers? adders? removers? misc?
   
     //gives you all of the mentioned documents; provide it with all of the existing documents
-    std::set<Document*> getMentionedDocuments(std::set<Document*>);
+    //DO NOT USE
+    std::set<Document*> getMentionedDocuments(const std::set<Document*>&);
+
+    //(re)sets the forward links (aka mentioned documents) given the contents of the document
+    void resetForwardLinks(const std::set<Document*>&);
 
     //adds a backward link to this document (if it doesnt exist)
     void addBackwardLink(Document*);

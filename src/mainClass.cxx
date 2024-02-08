@@ -27,7 +27,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <tuple>
 
 
-MainClass::MainClass(std::string path){
+MainClass::MainClass(const std::string& path){
 
   workingPath=path;
 
@@ -82,7 +82,7 @@ void MainClass::loadProject(){
   }
 }
  
-bool MainClass::loadDocument(std::string path){
+bool MainClass::loadDocument(const std::string& path){
 
   std::string identifier="";
   Document* document;
@@ -122,7 +122,6 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
   std::string preSetting="";
   std::string postSetting="";
   std::string description="";
-  std::string contents="";
   std::vector<std::string> tags;
 
   if(inputStream.bad()){
@@ -150,11 +149,9 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
   inputStream.ignore(100, ' ');
   std::getline(inputStream, description, '\n');
   
-  std::getline(inputStream, contents, '\0');
-
-
   
-  document=new Document(title, contents);
+  //the rest of the input stream is the contents of the document 
+  document=new Document(title, inputStream);
 
   
   return true;
@@ -174,7 +171,7 @@ bool MainClass::makeDocument(std::string title){
       append="";
     }
   
-    supposedName=makeSuitableForFileName(title+append);
+    supposedName=makeSuitableForAFileName(title+append);
     fileStream.open(workingPath+"/"+supposedName);
     
     //does the file exist?
@@ -193,6 +190,9 @@ bool MainClass::makeDocument(std::string title){
         //They have diffrent titles, just the same file names?
         //proceed
 
+    }else{
+      //close the file regardless if it was opened successfully
+      fileStream.close();
     }
 
     if(i>=999){
@@ -220,12 +220,15 @@ bool MainClass::makeDocument(std::string title){
 }
 
 
-std::string MainClass::makeSuitableForFileName(std::string in){
+std::string MainClass::makeSuitableForAFileName(std::string in){
   std::string out="";
 
   // // https://en.cppreference.com/w/cpp/algorithm/transform
   // transform(in.begin(), in.end(), out.begin(), tolower); 
 
+  //why did I use ascii key codes instead of chars
+  //TODO replace the keycodes with actual chars
+  
   for(char character : in){
     character=tolower(character);
     

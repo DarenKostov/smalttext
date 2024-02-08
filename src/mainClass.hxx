@@ -34,7 +34,7 @@ class MainClass{
   public:
 
     //constructor, like a atSTartUp function
-    MainClass(std::string);
+    MainClass(const std::string&);
 
     //deconstror
     ~MainClass();
@@ -46,7 +46,7 @@ class MainClass{
   private:
   
     //turns a string to a suitable name for a file
-    std::string makeSuitableForFileName(std::string);
+    std::string makeSuitableForAFileName(std::string);
   
     //makes a new document in the directory whose path is the working path
     bool makeDocument(std::string);
@@ -55,7 +55,7 @@ class MainClass{
     void loadProject();
   
     //loads a document from a file path relative to the working path
-    bool loadDocument(std::string);
+    bool loadDocument(const std::string&);
   
     //loads a document of version WXYZ
     bool loadDocument_0_0_0(std::istream&, Document*&);

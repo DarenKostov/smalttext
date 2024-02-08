@@ -23,14 +23,19 @@ If not, see <https://www.gnu.org/licenses/>.
 
 
 
-Document::Document(std::string name){
-  title=name;
+Document::Document(const std::string& name){
+  setTitle(name);
 }
 
 
-Document::Document(std::string name, std::string text){
-  title=name;
-  contents=text;
+Document::Document(const std::string& name, const std::string& text){
+  setTitle(name);
+  setContents(text);
+}
+
+Document::Document(const std::string& name, std::istream& text){
+  setTitle(name);
+  setContents(text);
 }
 
 
@@ -39,23 +44,34 @@ Document::~Document(){
   //TODO perhaps log the deletions of the documents somewhere
 }
 
-void Document::rename(std::string name){
+void Document::rename(const std::string& name){
+  setTitle(name);
+}
+
+void Document::setName(const std::string& name){
+  setTitle(name);
+}
+
+void Document::setTitle(const std::string& name){
+  // std::cout << "{" << name << "}\n";
   title=name;
+  // std::cout << "{" << title << "} = {" << name << "}\n";
 }
 
-void Document::setName(std::string name){
-  rename(name);
-}
-
-
-void Document::setContents(std::string stuff){
+void Document::setContents(const std::string& stuff){
   contents=stuff;
 }
 
-void Document::resetLinks(std::set<Document*> allDocuments){
+void Document::setContents(std::istream& contentStream){
+  std::getline(contentStream, contents, '\0');
+}
+
+
+
+void Document::resetLinks(const std::set<Document*>& allDocuments){
 
   auto oldForwardLinks=forwardLinks;
-  forwardLinks=getMentionedDocuments(allDocuments);
+  resetForwardLinks(allDocuments);
 
   std::set<Document*> removedForwardLinks;
   std::set<Document*> addedForwardLinks;
@@ -101,8 +117,42 @@ void Document::removeBackwardLink(Document* document){
 }
 
 
+void Document::resetForwardLinks(const std::set<Document*>& allDocuments){
 
-std::set<Document*> Document::getMentionedDocuments(std::set<Document*> allDocuments){
+  forwardLinks.clear();
+  auto& output=forwardLinks;
+  
+  std::regex pattern("\\{([^\\}]*)\\{([^\\}]+)\\}([^\\}]*)\\}");
+  std::smatch match;
+
+  std::sregex_iterator regIterator(contents.begin(), contents.end(), pattern);
+  std::sregex_iterator endIterator;
+
+
+  for(;regIterator!=endIterator; regIterator++){
+
+      //0 is the whole thing
+      //1 is the tags
+      //2 is the title (thats what we want)
+      //3 is the displayed name
+    auto documentTitle=regIterator->str(2);
+    auto documentPointer{allDocuments.begin()};
+    
+    for(; documentPointer!=allDocuments.end(); documentPointer++){
+      if((*documentPointer)->getTitle()==regIterator->str(2)){
+        break;
+      }
+    }
+    
+    
+    if(documentPointer!=allDocuments.end()){
+      output.insert(*documentPointer);
+    }
+ 
+  }
+}
+
+std::set<Document*> Document::getMentionedDocuments(const std::set<Document*>& allDocuments){
 
 
   std::set<Document*> output;
