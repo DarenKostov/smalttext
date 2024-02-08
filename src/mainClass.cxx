@@ -50,20 +50,7 @@ void MainClass::startProgram(){
 
   loadProject();  
 
-  
-  for(auto document : documents){
-    std::cout << document->getTitle() << ":\n";
-
-    std::cout << "\tForward Links:\n";
-    for(auto forward : document->getForwardLinks()){
-      std::cout << "\t\t" << forward->getTitle() << "\n";
-    }
-
-    std::cout << "\tBackward Links:\n";
-    for(auto forward : document->getBackwardLinks()){
-      std::cout << "\t\t" << forward->getTitle() << "\n";
-    }
-  }
+  printLinks();
 
 
 
@@ -246,6 +233,27 @@ std::string MainClass::makeSuitableForAFileName(std::string in){
   return out;
 }
 
+
+void MainClass::printLinks(){
+  
+  for(auto document : documents){
+    std::cout << document->getTitle() << ":\n";
+
+    std::cout << "\tMentions:\n";
+    for(auto forward : document->getForwardLinks()){
+      std::cout << "\t\t" << forward->getTitle() << "\n";
+    }
+
+    std::cout << "\tMentioned by:\n";
+    for(auto forward : document->getBackwardLinks()){
+      std::cout << "\t\t" << forward->getTitle() << "\n";
+    }
+  }
+}
+
+void MainClass::printMentions(){
+  printLinks();
+}
 
 
 

@@ -53,9 +53,7 @@ void Document::setName(const std::string& name){
 }
 
 void Document::setTitle(const std::string& name){
-  // std::cout << "{" << name << "}\n";
   title=name;
-  // std::cout << "{" << title << "} = {" << name << "}\n";
 }
 
 void Document::setContents(const std::string& stuff){

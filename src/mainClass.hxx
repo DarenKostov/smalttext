@@ -44,7 +44,11 @@ class MainClass{
 
 
   private:
-  
+
+    //prints the relationship between documents
+    void printLinks();
+    void printMentions();
+    
     //turns a string to a suitable name for a file
     std::string makeSuitableForAFileName(std::string);
   
