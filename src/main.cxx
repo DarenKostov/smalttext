@@ -20,6 +20,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
 #include <csignal>
+#include <filesystem>
 
 //prints the licence
 void printLicence();
@@ -68,7 +69,8 @@ void signal_handler(int signal_num){
 
 int main(int argc, char **argv){
 
-
+  std::string projectPath{""};
+  
   //check all flags
   for(int i=0; i<argc; i++){
     std::string thisArg=std::string(argv[i]);
@@ -81,6 +83,8 @@ int main(int argc, char **argv){
     }else if(thisArg=="-v" || thisArg=="--version"){
       printVersion();
       return 0;
+    }else{
+      projectPath=thisArg;
     }
   }
 
@@ -89,8 +93,14 @@ int main(int argc, char **argv){
 
   signal(SIGINT, signal_handler);
 
+  if(projectPath[0]!='/'){
+    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90050
+    projectPath=std::filesystem::current_path().generic_string()+'/'+projectPath;
 
-  MainClass* mainInstance=new MainClass();
+  }
+
+
+  MainClass* mainInstance=new MainClass(projectPath);
   atExitFree(mainInstance);
 
   mainInstance->startProgram();
@@ -112,7 +122,7 @@ void printHelp(){
 void printVersion(){
   std::cout << "Copyright (c) Daren Kostov\n";
   std::cout << "GPLv3\n";
-  std::cout << "TEMPLATE\n";
+  std::cout << "SMALTTEXT\n";
     
   //Version Major.Minor.Patch
   std::cout << "Version 0.0.0\n";

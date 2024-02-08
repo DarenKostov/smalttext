@@ -104,10 +104,16 @@ void Document::removeBackwardLink(Document* document){
 
 std::set<Document*> Document::getMentionedDocuments(std::set<Document*> allDocuments){
 
+
   std::set<Document*> output;
   
   std::regex pattern("\\{([^\\}]*)\\{([^\\}]+)\\}([^\\}]*)\\}");
   std::smatch match;
+
+
+  // (?<=\{)([^\{\}]+)(?=\})
+  // (?<=(?<!\{)\{)[^{}]*(?=\}(?!\}))
+  // \{([^{\]]*(?:\{(?:[^{\]]*\})[^\{\}]*)*\})[^\{\}]*\}
 
   std::sregex_iterator regIterator(contents.begin(), contents.end(), pattern);
   std::sregex_iterator endIterator;
@@ -115,21 +121,22 @@ std::set<Document*> Document::getMentionedDocuments(std::set<Document*> allDocum
 
   for(;regIterator!=endIterator; regIterator++){
 
-
-    // https://en.cppreference.com/w/cpp/language/lambda
-    auto sameTitle=[&](Document* in){
       //0 is the whole thing
       //1 is the tags
       //2 is the title (thats what we want)
       //3 is the displayed name
-      return (in->getTitle())==(regIterator->str(2));
-    };
-
-    // https://en.cppreference.com/w/cpp/algorithm/find
-    //if the title exsits as a title on any document, add it to the output
-    auto result=std::find_if(allDocuments.begin(), allDocuments.end(), sameTitle);
-    if(result!=allDocuments.end()){
-      output.insert(*result);
+    auto documentTitle=regIterator->str(2);
+    auto documentPointer{allDocuments.begin()};
+    
+    for(; documentPointer!=allDocuments.end(); documentPointer++){
+      if((*documentPointer)->getTitle()==regIterator->str(2)){
+        break;
+      }
+    }
+    
+    
+    if(documentPointer!=allDocuments.end()){
+      output.insert(*documentPointer);
     }
  
   }

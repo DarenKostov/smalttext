@@ -18,6 +18,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include "document/document.hxx"
+#include <regex>
 
 class MainClass{
 
@@ -25,11 +26,15 @@ class MainClass{
     //variables:
     std::set<Document*> documents;
     std::string workingPath;
-    
+
+
+    //the pattern used to get the version of a document
+    std::regex identifierPattern;
+
   public:
 
     //constructor, like a atSTartUp function
-    MainClass();
+    MainClass(std::string);
 
     //deconstror
     ~MainClass();
@@ -43,12 +48,17 @@ class MainClass{
     //turns a string to a suitable name for a file
     std::string makeSuitableForFileName(std::string);
   
-    // bool loadFile(std::string);
+    //makes a new document in the directory whose path is the working path
+    bool makeDocument(std::string);
+
+    //loads every file from the working directory
+    void loadProject();
+  
     //loads a document from a file path relative to the working path
     bool loadDocument(std::string);
   
-    //makes a new document in the directory whose path is the working path
-    bool makeDocument(std::string);
+    //loads a document of version WXYZ
+    bool loadDocument_0_0_0(std::istream&, Document*&);
   
   
 };

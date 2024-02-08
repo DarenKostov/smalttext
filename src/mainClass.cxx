@@ -27,11 +27,11 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <tuple>
 
 
-MainClass::MainClass(){
+MainClass::MainClass(std::string path){
 
-  // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90050
-  workingPath=std::filesystem::current_path().generic_string();
-  workingPath+="/example";
+  workingPath=path;
+
+  identifierPattern.assign("<SMALTTEXT:([0-9]+\\.[0-9]+\\.[0-9]+)>");
 
 }
 MainClass::~MainClass(){
@@ -48,16 +48,8 @@ MainClass::~MainClass(){
 
 void MainClass::startProgram(){
 
-  
-  for (auto file : std::filesystem::directory_iterator(workingPath)) {
-    loadDocument(file.path());
-  }
+  loadProject();  
 
-  for (auto document : documents) {
-    document->resetLinks(documents);
-  }
-
-  
   
   for(auto document : documents){
     std::cout << document->getTitle() << ":\n";
@@ -73,18 +65,29 @@ void MainClass::startProgram(){
     }
   }
 
+
+
+
+
 }
 
+void MainClass::loadProject(){
+
+  for (auto file : std::filesystem::directory_iterator(workingPath)) {
+    loadDocument(file.path());
+  }
+
+  for (auto document : documents) {
+    document->resetLinks(documents);
+  }
+}
+ 
 bool MainClass::loadDocument(std::string path){
-  
+
   std::string identifier="";
-  std::string title="";
-  std::string tagLine="";
-  std::string preSetting="";
-  std::string postSetting="";
-  std::string description="";
-  std::string contents="";
-  std::vector<std::string> tags;
+  Document* document;
+  std::smatch match;
+  std::string version;
   std::ifstream inputFileStream(path);
 
   if(inputFileStream.bad()){
@@ -93,40 +96,66 @@ bool MainClass::loadDocument(std::string path){
 
   std::getline(inputFileStream, identifier);
 
-  if(identifier!="<SMALTTEXT:0.0.0>"){
-  // if(!(identifier=="<SMALTTEXT:0.0.0>" || identifier=="<SMALTTEXT>")){
+  if(!std::regex_match(identifier, match, identifierPattern)){
+    //identifier does not match, wrong file, return false
     return false;
-  }  
-  
-  
-  inputFileStream.ignore(100, '=');
-  inputFileStream.ignore(100, ' ');
-  std::getline(inputFileStream, title, '\n');
-  
-  inputFileStream.ignore(100, '=');
-  inputFileStream.ignore(100, ' ');
-  std::getline(inputFileStream, tagLine, '\n');
+  }
+  version=match.str(1);
 
-  inputFileStream.ignore(100, '=');
-  inputFileStream.ignore(100, ' ');
-  std::getline(inputFileStream, preSetting, '\n');
-  
-  inputFileStream.ignore(100, '=');
-  inputFileStream.ignore(100, ' ');
-  std::getline(inputFileStream, postSetting, '\n');
-  
-  inputFileStream.ignore(100, '=');
-  inputFileStream.ignore(100, ' ');
-  std::getline(inputFileStream, description, '\n');
-  
-  std::getline(inputFileStream, contents, '\0');
-
-  inputFileStream.close();
-
-  
-  auto document=new Document(title, contents);
+  if(version=="0.0.0"){
+    loadDocument_0_0_0(inputFileStream, document);
+  }else{
+    //unknown version
+    return false;
+  }
 
   documents.insert(document);
+  inputFileStream.close();
+
+  return true;
+}
+bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& document){
+
+  
+  std::string title="";
+  std::string tagLine="";
+  std::string preSetting="";
+  std::string postSetting="";
+  std::string description="";
+  std::string contents="";
+  std::vector<std::string> tags;
+
+  if(inputStream.bad()){
+    return false;
+  }
+  
+  
+  inputStream.ignore(100, '=');
+  inputStream.ignore(100, ' ');
+  std::getline(inputStream, title, '\n');
+  
+  inputStream.ignore(100, '=');
+  inputStream.ignore(100, ' ');
+  std::getline(inputStream, tagLine, '\n');
+
+  inputStream.ignore(100, '=');
+  inputStream.ignore(100, ' ');
+  std::getline(inputStream, preSetting, '\n');
+  
+  inputStream.ignore(100, '=');
+  inputStream.ignore(100, ' ');
+  std::getline(inputStream, postSetting, '\n');
+  
+  inputStream.ignore(100, '=');
+  inputStream.ignore(100, ' ');
+  std::getline(inputStream, description, '\n');
+  
+  std::getline(inputStream, contents, '\0');
+
+
+  
+  document=new Document(title, contents);
+
   
   return true;
 }
@@ -176,8 +205,16 @@ bool MainClass::makeDocument(std::string title){
   //create a new file
   std::ofstream newFileStream(workingPath+"/"+supposedName, std::ios::out);
 
+  //fill in a template
+  newFileStream << "<SMALTTEXT:0.0.0>\n";
+  newFileStream << "Title= " << title << "\n";
+  newFileStream << "Tags= \n";
+  newFileStream << "PreSetting= \n";
+  newFileStream << "PostSetting= \n";
+  newFileStream << "Description= \n";
+  newFileStream << "Contents:\n\n";
 
-  
+  newFileStream.close();
   
   return true;
 }
