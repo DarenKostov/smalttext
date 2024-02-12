@@ -15,6 +15,19 @@ You should have received a copy of the GNU General Public License along with sma
 If not, see <https://www.gnu.org/licenses/>.
 */
 
+/*
+
+bold:
+(?<=(?<!\*)\*)(\s*\b)([^\*]+)(\b\s*)(?=\*(?!\*))
+
+emphatic: start with one and only one "*", do not contain 2 or more "*", end with one and only 1 "*"
+(?<=\*\*)([^\*][^\*]+)(?=\*\*)
+
+
+
+
+*/
+
 
 #include "document.hxx"
 #include <algorithm>
@@ -38,6 +51,11 @@ Document::Document(const std::string& name, std::istream& text){
   setContents(text);
 }
 
+Document::Document(const std::string& name, std::istream& text, const format& style){
+  setTitle(name);
+  setContents(text);
+  setFormat(style);
+}
 
 Document::~Document(){
   //nothing to do here
@@ -64,6 +82,9 @@ void Document::setContents(std::istream& contentStream){
   std::getline(contentStream, contents, '\0');
 }
 
+void Document::setFormat(const format& style){
+  contentFormat=style;
+}
 
 
 void Document::resetLinks(const std::set<Document*>& allDocuments){
@@ -105,6 +126,9 @@ std::set<Document*>  Document::getForwardLinks(){
   return forwardLinks;
 }
 
+Document::format Document::getFormat(){
+  return contentFormat;
+}
 
 void Document::addBackwardLink(Document* document){
   backwardLinks.insert(document);

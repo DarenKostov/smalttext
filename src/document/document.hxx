@@ -33,6 +33,14 @@ class Document{
     //what document are linking to this file
     std::set<Document*> forwardLinks;
 
+  public: 
+
+    enum format{SmaltText, MarkDown, Unknown};
+  
+  private:
+
+    format contentFormat;
+    
   public:
 
     //==constructors & deconstructors
@@ -43,8 +51,11 @@ class Document{
     //document constructor, requres a title and contents.
     Document(const std::string&, const std::string&);
 
-    //document constructor, requres a title ann an istream with the contents.
+    //document constructor, requres a title and an istream with the contents.
     Document(const std::string&, std::istream&);
+
+    //document constructor, requres a title, an istream with the contents, and the format of the contents.
+    Document(const std::string&, std::istream&, const format&);
 
     //document deconstructor
     ~Document();
@@ -63,6 +74,8 @@ class Document{
     //resets the links from this document (what this document links to); provide it with all of the existing documents
     void resetLinks(const std::set<Document*>&);
 
+    //sets the format of the document
+    void setFormat(const format&);
 
     //==getters
 
@@ -78,6 +91,8 @@ class Document{
     //gives you what documents this document is linking to
     std::set<Document*>  getForwardLinks();
 
+    //gets the format of the document
+    format getFormat();
 
     //==obtainers? adders? removers? misc?
   

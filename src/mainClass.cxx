@@ -101,49 +101,6 @@ bool MainClass::loadDocument(const std::string& path){
 
   return true;
 }
-bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& document){
-
-  
-  std::string title="";
-  std::string tagLine="";
-  std::string preSetting="";
-  std::string postSetting="";
-  std::string description="";
-  std::vector<std::string> tags;
-
-  if(inputStream.bad()){
-    return false;
-  }
-  
-  
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, title, '\n');
-  
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, tagLine, '\n');
-
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, preSetting, '\n');
-  
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, postSetting, '\n');
-  
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, description, '\n');
-  
-  
-  //the rest of the input stream is the contents of the document 
-  document=new Document(title, inputStream);
-
-  
-  return true;
-}
-
 
 bool MainClass::makeDocument(std::string title){
   
@@ -198,6 +155,7 @@ bool MainClass::makeDocument(std::string title){
   newFileStream << "Tags= \n";
   newFileStream << "PreSetting= \n";
   newFileStream << "PostSetting= \n";
+  newFileStream << "Format= SmaltText\n";
   newFileStream << "Description= \n";
   newFileStream << "Contents:\n\n";
 
