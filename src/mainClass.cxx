@@ -38,7 +38,7 @@ MainClass::MainClass(const std::string& path){
 MainClass::~MainClass(){
 
   //make sure we are not making mery leaks  
-  for(const auto& [path, document]: documents){
+  for(const auto& [path, document] : documents){
     delete document;
   }
 
@@ -204,7 +204,7 @@ void MainClass::makeSuitableForAFileName(std::string& in){
 
 void MainClass::printLinks(){
   
-  for(auto document : documents){
+  for(const auto&  [path, document] : documents){
     std::cout << document->getTitle() << ":\n";
 
     std::cout << "\tMentions:\n";

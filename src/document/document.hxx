@@ -77,7 +77,7 @@ class Document{
     void setContents(std::istream&);
 
     //resets the links from this document (what this document links to); provide it with all of the existing documents
-    void resetLinks(const std::set<Document*>&);
+    void resetLinks(const std::unordered_map<std::filesystem::path, Document*>&);
 
     //sets the format of the document
     void setFormat(const format&);
@@ -101,12 +101,8 @@ class Document{
 
     //==obtainers? adders? removers? misc?
   
-    //gives you all of the mentioned documents; provide it with all of the existing documents
-    //DO NOT USE
-    std::set<Document*> getMentionedDocuments(const std::set<Document*>&);
-
     //(re)sets the forward links (aka mentioned documents) given the contents of the document
-    void resetForwardLinks(const std::set<Document*>&);
+    void resetForwardLinks(const std::unordered_map<std::filesystem::path, Document*>&);
 
     //adds a backward link to this document (if it doesnt exist)
     void addBackwardLink(Document*);

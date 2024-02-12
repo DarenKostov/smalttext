@@ -33,6 +33,7 @@ emphatic: start with one and only one "*", do not contain 2 or more "*", end wit
 #include <algorithm>
 #include <iostream>
 #include <regex>
+#include <unordered_map>
 
 
 
@@ -87,7 +88,7 @@ void Document::setFormat(const format& style){
 }
 
 
-void Document::resetLinks(const std::set<Document*>& allDocuments){
+void Document::resetLinks(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
   auto oldForwardLinks=forwardLinks;
   resetForwardLinks(allDocuments);
@@ -139,10 +140,9 @@ void Document::removeBackwardLink(Document* document){
 }
 
 
-void Document::resetForwardLinks(const std::set<Document*>& allDocuments){
+void Document::resetForwardLinks(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
   forwardLinks.clear();
-  auto& output=forwardLinks;
   
   std::regex pattern("\\{([^\\}]*)\\{([^\\}]+)\\}([^\\}]*)\\}");
   std::smatch match;
@@ -157,62 +157,19 @@ void Document::resetForwardLinks(const std::set<Document*>& allDocuments){
       //1 is the tags
       //2 is the title (thats what we want)
       //3 is the displayed name
-    auto documentTitle=regIterator->str(2);
-    auto documentPointer{allDocuments.begin()};
+    auto mentionedDocumentTitle=regIterator->str(2);
+    Document* documentPointer{nullptr};
     
-    for(; documentPointer!=allDocuments.end(); documentPointer++){
-      if((*documentPointer)->getTitle()==regIterator->str(2)){
+    for(const auto& [dontCare, document] : allDocuments){
+      if(document->getTitle()==mentionedDocumentTitle){
+        forwardLinks.insert(documentPointer);
         break;
       }
     }
     
     
-    if(documentPointer!=allDocuments.end()){
-      output.insert(*documentPointer);
-    }
  
   }
 }
 
-std::set<Document*> Document::getMentionedDocuments(const std::set<Document*>& allDocuments){
-
-
-  std::set<Document*> output;
-  
-  std::regex pattern("\\{([^\\}]*)\\{([^\\}]+)\\}([^\\}]*)\\}");
-  std::smatch match;
-
-
-  // (?<=\{)([^\{\}]+)(?=\})
-  // (?<=(?<!\{)\{)[^{}]*(?=\}(?!\}))
-  // \{([^{\]]*(?:\{(?:[^{\]]*\})[^\{\}]*)*\})[^\{\}]*\}
-
-  std::sregex_iterator regIterator(contents.begin(), contents.end(), pattern);
-  std::sregex_iterator endIterator;
-
-
-  for(;regIterator!=endIterator; regIterator++){
-
-      //0 is the whole thing
-      //1 is the tags
-      //2 is the title (thats what we want)
-      //3 is the displayed name
-    auto documentTitle=regIterator->str(2);
-    auto documentPointer{allDocuments.begin()};
-    
-    for(; documentPointer!=allDocuments.end(); documentPointer++){
-      if((*documentPointer)->getTitle()==regIterator->str(2)){
-        break;
-      }
-    }
-    
-    
-    if(documentPointer!=allDocuments.end()){
-      output.insert(*documentPointer);
-    }
- 
-  }
-
-  return output;
-}
 
