@@ -17,8 +17,10 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <filesystem>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 
 class Document{
@@ -32,6 +34,9 @@ class Document{
 
     //what document are linking to this file
     std::set<Document*> forwardLinks;
+
+  
+    // const std::set<Document*>& allDocuments;
 
   public: 
 

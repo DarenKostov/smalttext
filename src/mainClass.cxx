@@ -37,7 +37,7 @@ MainClass::MainClass(const std::string& path){
 MainClass::~MainClass(){
 
   //make sure we are not making mery leaks  
-  for(auto document : documents){
+  for(const auto& [path, document]: documents){
     delete document;
   }
 
@@ -60,19 +60,19 @@ void MainClass::startProgram(){
 
 void MainClass::loadProject(){
 
-  for (auto file : std::filesystem::directory_iterator(workingPath)) {
-    loadDocument(file.path());
+  for (auto filePath : std::filesystem::directory_iterator(workingPath)) {
+    loadDocument(filePath);
   }
 
-  for (auto document : documents) {
+  for (auto& [path, document] : documents) {
     document->resetLinks(documents);
   }
 }
  
-bool MainClass::loadDocument(const std::string& path){
+bool MainClass::loadDocument(const std::filesystem::path& path){
 
   std::string identifier="";
-  Document* document;
+  Document* document=nullptr;
   std::smatch match;
   std::string version;
   std::ifstream inputFileStream(path);
@@ -96,7 +96,12 @@ bool MainClass::loadDocument(const std::string& path){
     return false;
   }
 
-  documents.insert(document);
+  //if the document is already loaded, delete it to not make memory leaks
+  if(documents.find(path)!=documents.end()){
+    delete documents[path];
+  }
+  
+  documents[path]=document;
   inputFileStream.close();
 
   return true;
@@ -104,7 +109,8 @@ bool MainClass::loadDocument(const std::string& path){
 
 bool MainClass::makeDocument(std::string title){
   
-  std::string supposedName;
+  std::string supposedName{""};
+  std::filesystem::path supposedPath{workingPath};
   std::ifstream fileStream;
 
   //check which file path would be the best, check for duplicates, etc
@@ -116,7 +122,7 @@ bool MainClass::makeDocument(std::string title){
     }
   
     supposedName=makeSuitableForAFileName(title+append);
-    fileStream.open(workingPath+"/"+supposedName);
+    fileStream.open(workingPath.+supposedName);
     
     //does the file exist?
     if(fileStream.good()){

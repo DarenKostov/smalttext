@@ -18,14 +18,16 @@ If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include "document/document.hxx"
+#include <filesystem>
 #include <regex>
+#include <unordered_map>
 
 class MainClass{
 
   private:
     //variables:
-    std::set<Document*> documents;
-    std::string workingPath;
+    std::unordered_map<std::filesystem::path, Document*> documents;
+    std::filesystem::path workingPath;
 
 
     //the pattern used to get the version of a document
@@ -59,7 +61,7 @@ class MainClass{
     void loadProject();
   
     //loads a document from a file path relative to the working path
-    bool loadDocument(const std::string&);
+    bool loadDocument(const std::filesystem::path&);
   
     //loads a document of version WXYZ
     bool loadDocument_0_0_0(std::istream&, Document*&);
