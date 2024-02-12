@@ -32,6 +32,7 @@ MainClass::MainClass(const std::string& path){
   workingPath=path;
 
   identifierPattern.assign("<SMALTTEXT:([0-9]+\\.[0-9]+\\.[0-9]+)>");
+  defaultFileExtention=".txt";
 
 }
 MainClass::~MainClass(){
@@ -107,33 +108,37 @@ bool MainClass::loadDocument(const std::filesystem::path& path){
   return true;
 }
 
-bool MainClass::makeDocument(std::string title){
+bool MainClass::makeDocument(const std::string& title){
   
-  std::string supposedName{""};
+  std::string supposedName{title};
   std::filesystem::path supposedPath{workingPath};
   std::ifstream fileStream;
-
+  
+  //set up initial
+  makeSuitableForAFileName(supposedName);
+  supposedPath/=(supposedName+defaultFileExtention);
+  
+  
   //check which file path would be the best, check for duplicates, etc
-  for(int i=0;; i++){
+  for(int attempt=0;; attempt++){
       
-    std::string append="-"+std::to_string(i);
-    if(i==0){
-      append="";
+    //change the name a bit if there is already a file with the same name
+    if(attempt!=0){
+      supposedPath.replace_filename(supposedName+"-"+std::to_string(attempt)+defaultFileExtention);
     }
   
-    supposedName=makeSuitableForAFileName(title+append);
-    fileStream.open(workingPath.+supposedName);
+    fileStream.open(supposedPath);
     
-    //does the file exist?
-    if(fileStream.good()){
+    //does the file exist? (actually: did we sucessfully open the file?)
+    // if(fileStream.good()){
+    // if(fileStream.is_open()){
+    if(fileStream){
 
-      std::string line="";
-      std::getline(fileStream, line);
-      std::getline(fileStream, line);
       fileStream.close();
+      fileStream.clear();
 
       //does this document have the exact same title?
-      if(title==line){
+      if(title==documents[supposedPath]->getTitle()){
         //they do? there is nothing we can do, 2 documents cannot have the same title
         return false;
       }
@@ -143,9 +148,10 @@ bool MainClass::makeDocument(std::string title){
     }else{
       //close the file regardless if it was opened successfully
       fileStream.close();
+      fileStream.clear();
     }
 
-    if(i>=999){
+    if(attempt>=999){
       //if we reach this, we have unreasonably many # of documents with too similar (the same) titles
       return false;
     }
@@ -153,7 +159,7 @@ bool MainClass::makeDocument(std::string title){
   }
 
   //create a new file
-  std::ofstream newFileStream(workingPath+"/"+supposedName, std::ios::out);
+  std::ofstream newFileStream(supposedPath, std::ios::out);
 
   //fill in a template
   newFileStream << "<SMALTTEXT:0.0.0>\n";
@@ -171,30 +177,28 @@ bool MainClass::makeDocument(std::string title){
 }
 
 
-std::string MainClass::makeSuitableForAFileName(std::string in){
+void MainClass::makeSuitableForAFileName(std::string& in){
   std::string out="";
 
   // // https://en.cppreference.com/w/cpp/algorithm/transform
-  // transform(in.begin(), in.end(), out.begin(), tolower); 
+  transform(in.begin(), in.end(), out.begin(), tolower); 
 
-  //why did I use ascii key codes instead of chars
-  //TODO replace the keycodes with actual chars
-  
   for(char character : in){
     character=tolower(character);
     
-    if(!((character>=48 && character<=57) || (character>=97 && character<=122) || character==95 || character==45 || character==32))
+    if(!((character>='0' && character<='9') || (character>='a' && character<='z') || character=='_' || character=='-' || character==' '))
       continue;
     
-    if(character==32)
-      character=45;
+    if(character==' ')
+      character='-';
     
     out+=character;
   }
   
-  out+=".txt";
+  in=out;
 
-  return out;
+  // out+=".txt";
+  // return out;
 }
 
 

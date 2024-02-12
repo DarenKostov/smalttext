@@ -33,6 +33,9 @@ class MainClass{
     //the pattern used to get the version of a document
     std::regex identifierPattern;
 
+    //the default extention with which a new document is made
+    std::string defaultFileExtention;
+
   public:
 
     //constructor, like a atSTartUp function
@@ -52,10 +55,10 @@ class MainClass{
     void printMentions();
     
     //turns a string to a suitable name for a file
-    std::string makeSuitableForAFileName(std::string);
+    void makeSuitableForAFileName(std::string&);
   
     //makes a new document in the directory whose path is the working path
-    bool makeDocument(std::string);
+    bool makeDocument(const std::string&);
 
     //loads every file from the working directory
     void loadProject();
