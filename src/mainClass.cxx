@@ -48,15 +48,8 @@ MainClass::~MainClass(){
 
 
 void MainClass::startProgram(){
-
   loadProject();  
-
   printLinks();
-
-
-
-
-
 }
 
 void MainClass::loadProject(){

@@ -17,14 +17,30 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <cstdint>
 #include <filesystem>
 #include <set>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 
 class Document{
 
+  public: 
+
+    enum format{SmaltText, MarkDown, Unknown};
+
+    struct TextBlock{
+  
+      enum fontFormats{Regular, Bold, Italic, Bold_Italic, CodeBlock};
+
+      fontFormats fontFormat{Regular};
+      int fontSize{13};
+      uint32_t color{0x000000ff};
+      std::string content{""};
+    };
+  
   private:
     std::string title;    
     std::string contents;
@@ -35,12 +51,10 @@ class Document{
     //what document are linking to this file
     std::set<Document*> forwardLinks;
 
+    //the processed contents into separate text blocks
+    std::vector<TextBlock*> textBlocks;
   
-    // const std::set<Document*>& allDocuments;
 
-  public: 
-
-    enum format{SmaltText, MarkDown, Unknown};
   
   private:
 
@@ -99,11 +113,21 @@ class Document{
     //gets the format of the document
     format getFormat();
 
+    //gives you the processed textBlocks
+    const std::vector<TextBlock*> getTextBlocks();
+    
     //==obtainers? adders? removers? misc?
   
     //(re)sets the forward links (aka mentioned documents) given the contents of the document
     void resetForwardLinks(const std::unordered_map<std::filesystem::path, Document*>&);
 
+    //processes the contents into text blocks
+    void processContents();
+
+    //processes the contents inputed directly into text blocks
+    void setAndProcessContents(std::istream&);
+    void processContents(std::istream&);
+  
     //adds a backward link to this document (if it doesnt exist)
     void addBackwardLink(Document*);
   
