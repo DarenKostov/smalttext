@@ -33,12 +33,25 @@ class Document{
 
     struct TextBlock{
   
-      enum fontFormats{Regular, Bold, Italic, Bold_Italic, CodeBlock};
-
-      fontFormats fontFormat{Regular};
+      enum fontFlags{
+        Regular=0        << 0, //no flags
+        Bold=1           << 0,
+        Italic=1         << 1,
+        Underlined=1     << 2,
+        StrickeThrough=1 << 3,
+        SubScripts=1     << 4,
+        SuperScript=1    << 5,
+        CodeBlock=1      << 6,
+        Url=1            << 7, //treat the contents as a url to a website
+        FilePath=1       << 8, //treat the contencts as path to a local file
+      };      
+    
+      fontFlags fontFormat{Regular};
       int fontSize{13};
       uint32_t color{0x000000ff};
       std::string content{""};
+      Document* link{nullptr};
+      
     };
   
   private:
