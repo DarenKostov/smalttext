@@ -42,14 +42,16 @@ class Document{
         SubScripts=1     << 4,
         SuperScript=1    << 5,
         CodeBlock=1      << 6,
-        Url=1            << 7, //treat the contents as a url to a website
-        FilePath=1       << 8, //treat the contencts as path to a local file
+        Url=1            << 7, //a url to a website
+        FilePath=1       << 8, //a path to a local file
       };      
     
       fontFlags fontFormat{Regular};
       int fontSize{13};
       uint32_t color{0x000000ff};
       std::string content{""};
+
+      std::string urlOrPath{""};
       Document* link{nullptr};
       
     };
