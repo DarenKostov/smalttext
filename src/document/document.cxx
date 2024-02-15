@@ -154,9 +154,10 @@ void Document::resetForwardLinks(const std::unordered_map<std::filesystem::path,
       }
     }
     
-    
- 
   }
 }
+
+
+
 
 
