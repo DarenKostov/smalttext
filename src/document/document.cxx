@@ -52,12 +52,6 @@ Document::Document(const std::string& name, std::istream& text){
   setContents(text);
 }
 
-Document::Document(const std::string& name, std::istream& text, const format& style){
-  setTitle(name);
-  setContents(text);
-  setFormat(style);
-}
-
 Document::~Document(){
   //nothing to do here
   //TODO perhaps log the deletions of the documents somewhere
@@ -81,10 +75,6 @@ void Document::setContents(const std::string& stuff){
 
 void Document::setContents(std::istream& contentStream){
   std::getline(contentStream, contents, '\0');
-}
-
-void Document::setFormat(const format& style){
-  contentFormat=style;
 }
 
 
@@ -127,9 +117,6 @@ std::set<Document*>  Document::getForwardLinks(){
   return forwardLinks;
 }
 
-Document::format Document::getFormat(){
-  return contentFormat;
-}
 
 void Document::addBackwardLink(Document* document){
   backwardLinks.insert(document);

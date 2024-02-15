@@ -26,10 +26,6 @@ If not, see <https://www.gnu.org/licenses/>.
 
 class Document{
 
-  public: 
-
-    enum format{SmaltText, MarkDown, Unknown};
-  
   private:
     std::string title;    
     std::string contents;
@@ -43,11 +39,7 @@ class Document{
     //the processed contents into separate text blocks
     std::vector<DocumentBlock*> textBlocks;
   
-  
-  private:
-
-    format contentFormat;
-    
+     
   public:
 
     //==constructors & deconstructors
@@ -60,9 +52,6 @@ class Document{
 
     //document constructor, requres a title and an istream with the contents.
     Document(const std::string&, std::istream&);
-
-    //document constructor, requres a title, an istream with the contents, and the format of the contents.
-    Document(const std::string&, std::istream&, const format&);
 
     //document deconstructor
     ~Document();
@@ -81,9 +70,6 @@ class Document{
     //resets the links from this document (what this document links to); provide it with all of the existing documents
     void resetLinks(const std::unordered_map<std::filesystem::path, Document*>&);
 
-    //sets the format of the document
-    void setFormat(const format&);
-
     //==getters
 
     //gives you the title of the document
@@ -97,9 +83,6 @@ class Document{
     
     //gives you what documents this document is linking to
     std::set<Document*>  getForwardLinks();
-
-    //gets the format of the document
-    format getFormat();
 
     //gives you the processed textBlocks
     const std::vector<TextBlock*> getTextBlocks();
