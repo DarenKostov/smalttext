@@ -17,44 +17,18 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <cstdint>
 #include <filesystem>
 #include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
+#include "textBlock.hxx"
 
 class Document{
 
   public: 
 
     enum format{SmaltText, MarkDown, Unknown};
-
-    struct TextBlock{
-  
-      enum fontFlags{
-        Regular=0        << 0, //no flags
-        Bold=1           << 0,
-        Italic=1         << 1,
-        Underlined=1     << 2,
-        StrickeThrough=1 << 3,
-        SubScripts=1     << 4,
-        SuperScript=1    << 5,
-        CodeBlock=1      << 6,
-        Url=1            << 7, //a url to a website
-        FilePath=1       << 8, //a path to a local file
-      };      
-    
-      fontFlags fontFormat{Regular};
-      int fontSize{13};
-      uint32_t color{0x000000ff};
-      std::string content{""};
-
-      std::string urlOrPath{""};
-      Document* link{nullptr};
-      
-    };
   
   private:
     std::string title;    
@@ -67,9 +41,8 @@ class Document{
     std::set<Document*> forwardLinks;
 
     //the processed contents into separate text blocks
-    std::vector<TextBlock*> textBlocks;
+    std::vector<DocumentBlock*> textBlocks;
   
-
   
   private:
 
@@ -142,6 +115,10 @@ class Document{
     //processes the contents inputed directly into text blocks
     void setAndProcessContents(std::istream&);
     void processContents(std::istream&);
+
+    //processes the contents inputed directly into text blocks and forward links
+    void refreshContentsAndLinks(std::istream&, const std::unordered_map<std::filesystem::path, Document*>&);
+    void processContents(std::istream&, const std::unordered_map<std::filesystem::path, Document*>&);
   
     //adds a backward link to this document (if it doesnt exist)
     void addBackwardLink(Document*);
