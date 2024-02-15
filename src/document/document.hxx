@@ -27,6 +27,7 @@ If not, see <https://www.gnu.org/licenses/>.
 class Document{
 
   private:
+
     std::string title;    
     std::string contents;
   
@@ -38,17 +39,13 @@ class Document{
 
     //the processed contents into separate text blocks
     std::vector<DocumentBlock*> textBlocks;
-  
-     
+       
   public:
 
     //==constructors & deconstructors
   
     //document constructor, requres a title.
     Document(const std::string&);
-  
-    //document constructor, requres a title and contents.
-    Document(const std::string&, const std::string&);
 
     //document constructor, requres a title and an istream with the contents.
     Document(const std::string&, std::istream&);
@@ -56,27 +53,24 @@ class Document{
     //document deconstructor
     ~Document();
   
-    //==setters
+    //==Title stuff
   
     //sets the title of the document
     void rename(const std::string&);
     void setName(const std::string&);
     void setTitle(const std::string&);
   
-    //sets the contents of the document
-    void setContents(const std::string&);
-    void setContents(std::istream&);
+    //gives you the title of the document
+    std::string getTitle();
+  
+
+    //==Links stuff
 
     //resets the links from this document (what this document links to); provide it with all of the existing documents
     void resetLinks(const std::unordered_map<std::filesystem::path, Document*>&);
 
-    //==getters
-
-    //gives you the title of the document
-    std::string getTitle();
-  
-    //gives you the contents of the document
-    std::string getContents();
+    //(re)sets the forward links (aka mentioned documents) given the contents of the document
+    void resetForwardLinks(const std::unordered_map<std::filesystem::path, Document*>&);
   
     //gives you the documents linking to the document
     std::set<Document*>  getBackwardLinks();
@@ -84,30 +78,34 @@ class Document{
     //gives you what documents this document is linking to
     std::set<Document*>  getForwardLinks();
 
+    //adds a backward link to this document (if it doesnt exist)
+    void addBackwardLink(Document*);
+
+    //removes a backward link to this document (if it exists)
+    void removeBackwardLink(Document*);
+  
+
+    //==Content stuff
+
+    //sets the contents of the document
+    void setContents(std::istream&);
+
+    //gives you the contents of the document
+    std::string getContents();
+  
     //gives you the processed textBlocks
     const std::vector<TextBlock*> getTextBlocks();
     
-    //==obtainers? adders? removers? misc?
-  
-    //(re)sets the forward links (aka mentioned documents) given the contents of the document
-    void resetForwardLinks(const std::unordered_map<std::filesystem::path, Document*>&);
-
-    //processes the contents into text blocks
-    void processContents();
-
-    //processes the contents inputed directly into text blocks
-    void setAndProcessContents(std::istream&);
-    void processContents(std::istream&);
-
     //processes the contents inputed directly into text blocks and forward links
-    void refreshContentsAndLinks(std::istream&, const std::unordered_map<std::filesystem::path, Document*>&);
     void processContents(std::istream&, const std::unordered_map<std::filesystem::path, Document*>&);
   
-    //adds a backward link to this document (if it doesnt exist)
-    void addBackwardLink(Document*);
+    //re-processes the contents that were already stored into text blocks and forward links
+    void processContents(const std::unordered_map<std::filesystem::path, Document*>&);
+
   
-    //removes a backward link to this document (if it exists)
-    void removeBackwardLink(Document*);
+  
+
+
 
 
 

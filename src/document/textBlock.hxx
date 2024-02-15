@@ -23,6 +23,8 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <filesystem>
+#include <type_traits>
+
 class Document;
 
 struct DocumentBlock{
@@ -41,7 +43,7 @@ struct SeparatorBlock : public DocumentBlock{
 };
 
 struct TextBlock : public DocumentBlock{
-  enum fontFlags{
+  enum fontFlags : unsigned int{
     Regular=0        << 0, //no flags
     Bold=1           << 0,
     Italic=1         << 1,
@@ -51,6 +53,7 @@ struct TextBlock : public DocumentBlock{
     SuperScript=1    << 5,
     CodeBlock=1      << 6,
   };      
+
 
   fontFlags fontFormat{Regular};
   int fontSize{13};
@@ -63,6 +66,37 @@ struct TextBlock : public DocumentBlock{
       
 };
 
+//https://stackoverflow.com/questions/1448396/how-to-use-enums-as-flags-in-c
+//Bitwise OR
+constexpr TextBlock::fontFlags operator|(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+  return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) | std::underlying_type_t<TextBlock::fontFlags>(right));
+}
+
+//perform Bitwise OR, aka, add this flag, no matter if it is set ot not
+inline TextBlock::fontFlags& operator|=(TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+  return left=left|right;
+}
+
+//Bitwise XOR
+constexpr TextBlock::fontFlags operator^(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+  return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) ^ std::underlying_type_t<TextBlock::fontFlags>(right));
+}
+
+//perform Bitwise XOR, aka, remove this flag if it there, add this flag if it not there
+inline bool operator^=(TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+  return left=left^right;
+}
+
+//Bitwise AND
+constexpr TextBlock::fontFlags operator&(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+  return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) & std::underlying_type_t<TextBlock::fontFlags>(right));
+}
+
+//not what the &= operator normaly does
+//checks if the flag is included
+inline bool operator&=(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+  return (left&right)==right;
+}
 
 struct TextBlockDocumentLink : public TextBlock{
   Document* link{nullptr};

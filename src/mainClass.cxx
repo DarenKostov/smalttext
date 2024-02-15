@@ -160,7 +160,6 @@ bool MainClass::makeDocument(const std::string& title){
   newFileStream << "Tags= \n";
   newFileStream << "PreSetting= \n";
   newFileStream << "PostSetting= \n";
-  newFileStream << "Format= SmaltText\n";
   newFileStream << "Description= \n";
   newFileStream << "Contents:\n\n";
 

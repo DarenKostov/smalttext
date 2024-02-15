@@ -42,10 +42,6 @@ Document::Document(const std::string& name){
 }
 
 
-Document::Document(const std::string& name, const std::string& text){
-  setTitle(name);
-  setContents(text);
-}
 
 Document::Document(const std::string& name, std::istream& text){
   setTitle(name);
@@ -67,10 +63,6 @@ void Document::setName(const std::string& name){
 
 void Document::setTitle(const std::string& name){
   title=name;
-}
-
-void Document::setContents(const std::string& stuff){
-  contents=stuff;
 }
 
 void Document::setContents(std::istream& contentStream){

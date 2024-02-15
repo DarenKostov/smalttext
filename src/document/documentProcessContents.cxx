@@ -16,10 +16,23 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "document.hxx"
+#include "textBlock.hxx"
 
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
-
-
+  setContents(stream);
+  processContents(allDocuments);
 }
 
 
+void Document::processContents(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+
+  TextBlock::fontFlags flags{TextBlock::Regular};
+
+
+  
+  for(const char& currentChar: contents){
+  
+      
+  }
+  
+}
