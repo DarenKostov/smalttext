@@ -30,6 +30,7 @@ class Document;
 struct DocumentBlock{
   enum type{Separator, Text, DocumentLink, FileLink, UrlLink};
   virtual type whatAmI()=0;
+  virtual ~DocumentBlock(){};
 };
 
 struct SeparatorBlock : public DocumentBlock{
@@ -83,7 +84,7 @@ constexpr TextBlock::fontFlags operator^(const TextBlock::fontFlags& left, const
 }
 
 //perform Bitwise XOR, aka, remove this flag if it there, add this flag if it not there
-inline bool operator^=(TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+inline TextBlock::fontFlags& operator^=(TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
   return left=left^right;
 }
 

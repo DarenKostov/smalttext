@@ -49,7 +49,11 @@ Document::Document(const std::string& name, std::istream& text){
 }
 
 Document::~Document(){
-  //nothing to do here
+
+  for(const auto& textBlock : textBlocks){
+    delete textBlock;
+  }
+  
   //TODO perhaps log the deletions of the documents somewhere
 }
 
