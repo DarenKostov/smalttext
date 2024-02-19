@@ -15,8 +15,15 @@ You should have received a copy of the GNU General Public License along with sma
 If not, see <https://www.gnu.org/licenses/>.
 */
 
+/* TODO
+   USE REGEX FOR THE MACROS!!!!!!
+*/
+
 #include "document.hxx"
 #include "textBlock.hxx"
+
+//makes the text font emphatic, or non emphatic depending on what it was previously
+void toggleEmphatic(TextBlock::fontFlags&);
 
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   setContents(stream);
@@ -32,78 +39,102 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
 
   int sequentialOpenCurlyBrackets{0};
   int sequentialClosedCurlyBrackets{0};
+  std::string documenttags{""};
+  std::string documentTitle{""};
+  std::string displayedTitle{""};
 
+  
   int consecutiveNewLinesCount{0};
   int consecutiveAsteriskCount{0};
-
-  bool startOfTextBlock{true};
-  
+  int consecutiveUnderScoreCount{0};
     
+  bool startOfTextBlock{true};
+      
   std::string currentTextBlock{""};
   
   for(const char& currentChar: contents){
 
-    switch(0){
-      case 0:
-      
-      if(currentChar=='\n'){
+    switch(currentChar){
+
+      case '\n':
         consecutiveNewLinesCount++;
-      }else{
-      }
+        startOfTextBlock=true;
+        break;
 
-      if(currentChar=='*'){
+      
+      case '*':
         consecutiveAsteriskCount++;
-      }else{
-        //add a separator block
-        if(consecutiveAsteriskCount>0){
-
-          //if we are changing the format, make a new text block
-          if(!startOfTextBlock){
-            textBlocks.push_back(new TextBlock());
-          }
-
-          //set the type of separator          
-          if(consecutiveAsteriskCount==1){
-            static_cast<TextBlock*>(textBlocks.back())->fontFormat |= TextBlock::Bold;
-          }else if(consecutiveAsteriskCount>=2){ // ** = *** = **** = ****...
-
-            //NOTE EMPHATIC TEXT HERE vVVVVVVVVv
-            static_cast<TextBlock*>(textBlocks.back())->fontFormat |= TextBlock::Bold;
-            static_cast<TextBlock*>(textBlocks.back())->fontFormat |= TextBlock::Italic;
-          }
-
-          consecutiveAsteriskCount=0;
-        }
-      }      
-
-      if(currentChar=='*'){
+        startOfTextBlock=true;
+        break;
+ 
+      case '_':
+        consecutiveUnderScoreCount++;
+        startOfTextBlock=true;
+        break;
       
       default:
 
+        //if this is a brand new text block we are talking about
+        if(startOfTextBlock){
+          
+          //===HANDLE NEWLINES FIRST
+          //add a separator block
+          if(consecutiveNewLinesCount>1){
 
-        //add a separator block
-        if(consecutiveNewLinesCount>1){
-
-          //if we are changing the format, make a new text block
-          if(!startOfTextBlock){
+            //newlines? new separator!
             textBlocks.push_back(new SeparatorBlock());
-          }
         
-          //set the type of separator          
-          if(consecutiveNewLinesCount==2){
-            static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewLine;
-          }else if(consecutiveNewLinesCount==3){
-            static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewParagraph;
-          }else if(consecutiveNewLinesCount>=4){
-            static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewChapter;
-          }
+            //set the type of separator          
+            if(consecutiveNewLinesCount==2){
+              static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewLine;
+            }else if(consecutiveNewLinesCount==3){
+              static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewParagraph;
+            }else if(consecutiveNewLinesCount>=4){
+              static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewChapter;
+            }
         
-          consecutiveNewLinesCount=0;
-          //dont care if we have ** or __ or whatever, newlines take presidence
-          break;
-        }
+            consecutiveNewLinesCount=0;
+
+            //we do care actually
+            //dont care if we have ** or __ or whatever, newlines take presidence
+            // break;
+          }
 
 
+          //add the new textblock, we got at least 1 character in it.
+          textBlocks.push_back(new TextBlock());
+
+
+          //===BOLD handling
+          if(consecutiveAsteriskCount==1){
+            //if not bold, bold; if bold, unbold
+            flags ^= TextBlock::fontFlags::Bold;
+
+          //===EMPHATIC handling
+          }else if(consecutiveAsteriskCount>=2){
+            //if not emphatic, emphatic; if emphatic, un-emphatic
+            toggleEmphatic(flags);
+          }
+        
+          //===ITALIC handling
+          if(consecutiveAsteriskCount==1){
+            //if not italic, italicize; if italic, un-italicize
+            flags ^= TextBlock::fontFlags::Italic;
+
+          //===UNDERLINE handling
+          }else if(consecutiveAsteriskCount>=2){
+            //if not underlined, underline; if underlined, un-underline
+            flags ^= TextBlock::fontFlags::Underlined;
+          }
+                    
+          static_cast<TextBlock*>(textBlocks.back())->fontFormat=flags;
+        
+          //reset these
+          consecutiveAsteriskCount=0;
+          consecutiveUnderScoreCount=0;
+        
+        }      
+        
         startOfTextBlock=false;
         currentTextBlock+=currentChar;
         break;
@@ -112,3 +143,24 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
   }
   
 }
+
+void toggleEmphatic(TextBlock::fontFlags& flags){
+  bool emphatic{false};
+
+  //check if it's emphatic
+  if(flags &= TextBlock::fontFlags::Bold)
+    if(flags &= TextBlock::fontFlags::Italic)
+      emphatic=true;
+
+  //make emphatic
+  flags |= TextBlock::Bold;
+  flags |= TextBlock::Italic;
+
+  //if it was previously emphatic, make it non emphatic
+  if(emphatic){
+  flags ^= TextBlock::Bold;
+  flags ^= TextBlock::Italic;
+  }
+
+}
+
