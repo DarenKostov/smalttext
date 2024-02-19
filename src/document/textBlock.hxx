@@ -52,14 +52,14 @@ struct TextBlock : public DocumentBlock{
     Italic=1         << 1,
     Underlined=1     << 2,
     StrickeThrough=1 << 3,
-    SubScripts=1     << 4,
+    SubScript=1     << 4,
     SuperScript=1    << 5,
     CodeBlock=1      << 6,
   };      
 
 
   fontFlags fontFormat{Regular};
-  int fontSize{13};
+  int heading{4};
   uint32_t color{DEFAULT_TEXTBLOCK_COLOR};
   std::string content{""};
 
@@ -96,7 +96,7 @@ constexpr TextBlock::fontFlags operator&(const TextBlock::fontFlags& left, const
 }
 
 //not what the &= operator normaly does
-//checks if the flag is included
+//checks if the flag or flags are included
 inline bool operator&=(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
   return (left&right)==right;
 }

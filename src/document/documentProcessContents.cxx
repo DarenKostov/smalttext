@@ -17,6 +17,13 @@ If not, see <https://www.gnu.org/licenses/>.
 
 /* TODO
    USE REGEX FOR THE MACROS!!!!!!
+
+  regex to get macro definition, first group is name, second group is the definition itself
+  (.*)(?<!\\)=(.*)
+
+  regex to get macro execution, if the group contains a "{" reject it
+  \{([^\}]+)\}
+
 */
 
 #include "document.hxx"
@@ -52,6 +59,9 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
   //should the next text block have the saved color and flags? "[load]"
   bool loadTextState{false};
   
+  //the heading of current line
+  int currentHeading{4};
+  
   int sequentialOpenCurlyBrackets{0};
   int sequentialClosedCurlyBrackets{0};
   std::string documenttags{""};
@@ -62,6 +72,9 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
   int consecutiveNewLinesCount{0};
   int consecutiveAsteriskCount{0};
   int consecutiveUnderScoreCount{0};
+  int consecutiveCaretCount{0};
+  int consecutiveTildeCount{0};
+  int consecutiveExclamationsAfterNewLine{0};
  
   bool startOfTextBlock{true};
       
@@ -88,6 +101,32 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
       case '_':
         consecutiveUnderScoreCount++;
         startOfTextBlock=true;
+        break;
+      
+      case '~':
+        consecutiveTildeCount++;
+        startOfTextBlock=true;
+        break;
+      
+      case '^':
+        consecutiveCaretCount++;
+        startOfTextBlock=true;
+        break;
+
+      case '!':
+        if(consecutiveNewLinesCount==0){
+          break;
+        }
+        consecutiveExclamationsAfterNewLine++;
+
+        /*
+
+          Yeah sure you can do that:
+      
+          __*! Underlined and bold Heading
+
+        */
+      
         break;
       
       
@@ -232,11 +271,33 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
             flags ^= TextBlock::fontFlags::Underlined;
           }
                     
+          //===SUB-CRIPT handling
+          if(consecutiveTildeCount==1){
+            flags ^= TextBlock::fontFlags::SubScript;
+
+          //===STRIKE-THROUGH handling
+          }else if(consecutiveTildeCount>=2){
+            flags ^= TextBlock::fontFlags::StrickeThrough;
+          }
+
+          //===SUPER-SCRIPT handling
+          if(consecutiveCaretCount==1){
+            flags ^= TextBlock::fontFlags::SuperScript;
+          }
+        
           static_cast<TextBlock*>(textBlocks.back())->fontFormat=flags;
+          static_cast<TextBlock*>(textBlocks.back())->color=textColor;
+          static_cast<TextBlock*>(textBlocks.back())->heading=currentHeading;
+          
         
           //reset these
           consecutiveAsteriskCount=0;
           consecutiveUnderScoreCount=0;
+          consecutiveUnderScoreCount=0;
+          consecutiveCaretCount=0;
+          consecutiveTildeCount=0;
+          consecutiveExclamationsAfterNewLine=0;
+ 
         }      
         
         startOfTextBlock=false;
