@@ -25,6 +25,8 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <filesystem>
 #include <type_traits>
 
+const uint32_t DEFAULT_TEXTBLOCK_COLOR{0x000000ff};
+
 class Document;
 
 struct DocumentBlock{
@@ -58,7 +60,7 @@ struct TextBlock : public DocumentBlock{
 
   fontFlags fontFormat{Regular};
   int fontSize{13};
-  uint32_t color{0x000000ff};
+  uint32_t color{DEFAULT_TEXTBLOCK_COLOR};
   std::string content{""};
 
   virtual type whatAmI(){
