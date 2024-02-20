@@ -61,6 +61,7 @@ struct TextBlock : public DocumentBlock{
   fontFlags fontFormat{Regular};
   int heading{4};
   uint32_t color{DEFAULT_TEXTBLOCK_COLOR};
+  int quoteLevel{0};
   std::string content{""};
 
   virtual type whatAmI(){

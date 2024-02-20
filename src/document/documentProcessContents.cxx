@@ -62,6 +62,9 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
   //the heading of current line
   int currentHeading{4};
   
+  //the quote level, 0 means no quote
+  int currentQuoteLevel{0};
+  
   int sequentialOpenCurlyBrackets{0};
   int sequentialClosedCurlyBrackets{0};
   std::string documenttags{""};
@@ -88,7 +91,11 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
 
       case '\n':
         consecutiveNewLinesCount++;
-        startOfTextBlock=true;
+        //only start a new word if this is the 2nd or 3rd or etc new line
+        //ignorre single new lines
+        if(consecutiveNewLinesCount>1){
+          startOfTextBlock=true;
+        }
         break;
 
       
@@ -224,22 +231,25 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
               static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewChapter;
             }
         
-          //===HEADING Handling
-          //is it an exclamation aka heading while we are on a new line?
-          //in other words, did this line start with a "!"
-          if(contents[i]=='!'){
-            //is there no formating?
-            if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount==0){
 
+          //did this line start with a X character
+          int originalIndex=i;
+          switch(contents[i]){
+
+            //===HEADING Handling
+            case '!':
+              //is there no formating?
+              if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount!=0){
+                break;
+              }
               /*
                 Yeah, you can't do that:
-      
+
                 __*! Underlined and bold Heading
 
               */
-              
+
               currentHeading=0;
-              int originalIndex=i;
 
               //we are calculating new heading
               for(;i<contentsLength && contents[i]=='!'; i++){
@@ -256,15 +266,39 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
                 i=originalIndex;
                 currentHeading=4;
               }
-              
+              break;
 
+          //===QUOTE Handling
+          case '>':
+            //is there no formating?
+            if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount!=0){
+              break;
             }
-          }
+            /*
+              Yeah, you can't do that:
+    
+              __*> The quote
 
+            */
             
-            //we do care actually
-            //dont care if we have ** or __ or whatever, newlines take presidence
-            // break;
+            currentQuoteLevel=0;
+
+            //we are calculating the quote level
+            for(;i<contentsLength && contents[i]=='>'; i++){
+              currentHeading++;
+            }
+
+            //is a space (" ") leading the exclamations? Good that is the correct format
+            if(contents[i]==' '){
+              i++;
+
+            //A space (" ") is not leading the exclamations? bad, that is not the correct format
+            }else{
+              //reset the heading and index, as if nothing happened
+              i=originalIndex;
+              currentQuoteLevel=0;
+            }
+            break;            
           }
 
 
@@ -311,6 +345,7 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
           static_cast<TextBlock*>(textBlocks.back())->fontFormat=flags;
           static_cast<TextBlock*>(textBlocks.back())->color=textColor;
           static_cast<TextBlock*>(textBlocks.back())->heading=currentHeading;
+          static_cast<TextBlock*>(textBlocks.back())->quoteLevel=currentQuoteLevel;
           
         
           //reset these
@@ -319,10 +354,12 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
           consecutiveUnderScoreCount=0;
           consecutiveCaretCount=0;
           consecutiveTildeCount=0;
-          consecutiveNewLinesCount=0;
  
         }      
         
+        //it it was a single line, the top didn't execute, and single newlines whould be ignored
+        consecutiveNewLinesCount=0;
+      
         startOfTextBlock=false;
         //this should be at least a TextBlock for the most part
         static_cast<TextBlock*>(textBlocks.back())->content+=contents[i];
