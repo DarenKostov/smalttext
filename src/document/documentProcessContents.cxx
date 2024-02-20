@@ -37,6 +37,9 @@ void toggleEmphatic(TextBlock::fontFlags&);
 //give it hex char, itll give you dec int; 0 if invalid
 int hexToDec(const char&);
 
+//counts the consecutive characters starting from an index
+int countConsecutiveCharacters(const std::string& input, int& index, const char& character);
+
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   setContents(stream);
   processContents(allDocuments);
@@ -232,27 +235,59 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
             }
         
 
-          //did this line start with a X character
-          int originalIndex=i;
-          switch(contents[i]){
+            //did this line start with a X character
+            int originalIndex=i;
+            switch(contents[i]){
 
-            //===HEADING Handling
-            case '!':
+              //===HEADING Handling
+              case '!':
+                //is there no formating?
+                if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount!=0){
+                  break;
+                }
+                /*
+                  Yeah, you can't do that:
+
+                  __*! Underlined and bold Heading
+
+                */
+
+                currentHeading=0;
+
+                //we are calculating new heading
+                for(;i<contentsLength && contents[i]=='!'; i++){
+                  currentHeading++;
+                }
+
+                //is a space (" ") leading the exclamations? Good that is the correct format
+                if(contents[i]==' '){
+                  i++;
+
+                //A space (" ") is not leading the exclamations? bad, that is not the correct format
+                }else{
+                  //reset the heading and index, as if nothing happened
+                  i=originalIndex;
+                  currentHeading=4;
+                }
+                break;
+
+            //===QUOTE Handling
+            case '>':
               //is there no formating?
               if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount!=0){
                 break;
               }
               /*
                 Yeah, you can't do that:
-
-                __*! Underlined and bold Heading
+    
+                __*> The quote
 
               */
+            
+              currentQuoteLevel=0;
 
-              currentHeading=0;
-
-              //we are calculating new heading
-              for(;i<contentsLength && contents[i]=='!'; i++){
+              //we are calculating the quote level
+              for(;i<contentsLength && contents[i]=='>'; i++){
                 currentHeading++;
               }
 
@@ -264,43 +299,11 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
               }else{
                 //reset the heading and index, as if nothing happened
                 i=originalIndex;
-                currentHeading=4;
+                currentQuoteLevel=0;
               }
-              break;
-
-          //===QUOTE Handling
-          case '>':
-            //is there no formating?
-            if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount!=0){
-              break;
+              break;            
             }
-            /*
-              Yeah, you can't do that:
-    
-              __*> The quote
-
-            */
-            
-            currentQuoteLevel=0;
-
-            //we are calculating the quote level
-            for(;i<contentsLength && contents[i]=='>'; i++){
-              currentHeading++;
-            }
-
-            //is a space (" ") leading the exclamations? Good that is the correct format
-            if(contents[i]==' '){
-              i++;
-
-            //A space (" ") is not leading the exclamations? bad, that is not the correct format
-            }else{
-              //reset the heading and index, as if nothing happened
-              i=originalIndex;
-              currentQuoteLevel=0;
-            }
-            break;            
           }
-
 
           //add the new textblock, we got at least 1 character in it.
           textBlocks.push_back(new TextBlock());
