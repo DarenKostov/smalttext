@@ -134,7 +134,7 @@ void Document::resetForwardLinks(const std::unordered_map<std::filesystem::path,
   std::sregex_iterator endIterator;
 
 
-  for(;regIterator!=endIterator; regIterator++){
+  for(; regIterator!=endIterator; regIterator++){
 
       //0 is the whole thing
       //1 is the tags
@@ -153,14 +153,43 @@ void Document::resetForwardLinks(const std::unordered_map<std::filesystem::path,
   }
 }
 
+
+//TODO nested macros are not handled
+//Make them work in the future!
 void Document::applyMacros(){
 
-  std::regex getMacroPattern("(.*)(?<!\\)=(.*)");
-  std::regex applyMacroPattern("\\{([^\\}]+)\\}");
+  //might change the assignment pattern
+  std::regex getMacroPattern("^(\\/\\/|#)\\$(.*):=(.*)$");
 
   std::unordered_map<std::string, std::string> macros;
 
+  //iterators
+  std::sregex_iterator macroIterator(contents.begin(), contents.end(), getMacroPattern);
+  std::sregex_iterator endIterator;
+  
 
+  //collect all the definitions
+  for(; macroIterator!=endIterator; macroIterator++){
+    macros[macroIterator->str(2)]=macroIterator->str(3);
+  }
+
+  //apply all the macros
+  for(const auto& [name, replaceWith] : macros){
+
+    std::string pattern{"{"+name+"}"};
+    std::size_t replaceLength{replaceWith.size()};
+
+    //apply the macro whereever it appears
+    for(std::string::size_type i{0}; i!=std::string::npos; i=contents.find(pattern, i)){
+      contents.replace(i, replaceLength, pattern);
+
+      //lets not waste time trying to match the thing we just replaced
+      i+=replaceLength;
+    }
+  }
+  
+
+  
 }
 
 
