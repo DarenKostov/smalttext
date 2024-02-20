@@ -30,6 +30,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include "textBlock.hxx"
 #include <cctype>
 #include <cmath>
+#include <cstddef>
 
 //makes the text font emphatic, or non emphatic depending on what it was previously
 void toggleEmphatic(TextBlock::fontFlags&);
@@ -37,8 +38,9 @@ void toggleEmphatic(TextBlock::fontFlags&);
 //give it hex char, itll give you dec int; 0 if invalid
 int hexToDec(const char&);
 
-//counts the consecutive characters starting from an index
-int countConsecutiveCharacters(const std::string& input, int& index, const char& character);
+//counts the consecutive characters starting from an index, if they dont with a space returns 0
+//be aware, the index inputed is being changed
+int countConsecutiveCharactersBeforeSpace(const std::string& input, int& index, const std::size_t& size, const char& character);
 
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   setContents(stream);
@@ -236,74 +238,26 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
         
 
             //did this line start with a X character
-            int originalIndex=i;
-            switch(contents[i]){
 
-              //===HEADING Handling
-              case '!':
-                //is there no formating?
-                if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount!=0){
+
+            //is there no formating?
+            if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount==0){
+              switch(contents[i]){
+
+                //===HEADING Handling
+                case '!':
+                  currentHeading=countConsecutiveCharactersBeforeSpace(contents, i, contentsLength, '!');
+
+                  //if currentHeading is 0 make it 4, if not leave it alone
+                  currentHeading=currentHeading? currentHeading: 4;
                   break;
-                }
-                /*
-                  Yeah, you can't do that:
 
-                  __*! Underlined and bold Heading
-
-                */
-
-                currentHeading=0;
-
-                //we are calculating new heading
-                for(;i<contentsLength && contents[i]=='!'; i++){
-                  currentHeading++;
-                }
-
-                //is a space (" ") leading the exclamations? Good that is the correct format
-                if(contents[i]==' '){
-                  i++;
-
-                //A space (" ") is not leading the exclamations? bad, that is not the correct format
-                }else{
-                  //reset the heading and index, as if nothing happened
-                  i=originalIndex;
-                  currentHeading=4;
-                }
-                break;
-
-            //===QUOTE Handling
-            case '>':
-              //is there no formating?
-              if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount!=0){
-                break;
+                //===QUOTE Handling
+                case '>':
+                  currentQuoteLevel=countConsecutiveCharactersBeforeSpace(contents, i, contentsLength, '>');
+                  break;            
               }
-              /*
-                Yeah, you can't do that:
-    
-                __*> The quote
-
-              */
-            
-              currentQuoteLevel=0;
-
-              //we are calculating the quote level
-              for(;i<contentsLength && contents[i]=='>'; i++){
-                currentHeading++;
-              }
-
-              //is a space (" ") leading the exclamations? Good that is the correct format
-              if(contents[i]==' '){
-                i++;
-
-              //A space (" ") is not leading the exclamations? bad, that is not the correct format
-              }else{
-                //reset the heading and index, as if nothing happened
-                i=originalIndex;
-                currentQuoteLevel=0;
-              }
-              break;            
             }
-          }
 
           //add the new textblock, we got at least 1 character in it.
           textBlocks.push_back(new TextBlock());
@@ -393,6 +347,29 @@ void toggleEmphatic(TextBlock::fontFlags& flags){
 
 }
 
+
+int countConsecutiveCharactersBeforeSpace(const std::string& input, int& index, const std::size_t& size, const char& character){
+
+    int output{0};
+    int originalIndex=index;
+  
+    //we are calculating new heading
+    for(;index<size && input[index]=='!'; index++){
+      output++;
+    }
+
+    //is a space (" ") leading the character?
+    if(input[index]==' '){
+      index++;
+      return output;
+
+    //A space (" ") is not leading the character?
+    }else{
+      //reset the heading and index, as if nothing happened
+      index=originalIndex;
+      return 0;
+    }
+}
 
 /*This performed worse
 int hexToDec(const char& in){
