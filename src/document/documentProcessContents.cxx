@@ -249,7 +249,9 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
                   currentHeading=countConsecutiveCharactersBeforeSpace(contents, i, contentsLength, '!');
 
                   //if currentHeading is 0 make it 4, if not leave it alone
-                  currentHeading=currentHeading? currentHeading: 4;
+                  if(!currentHeading){
+                    currentHeading=4;
+                  }
                   break;
 
                 //===QUOTE Handling
