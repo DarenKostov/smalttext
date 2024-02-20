@@ -114,16 +114,26 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
         startOfTextBlock=true;
         break;
 
-      // //===COMMENT Handler
-      // case '/':
-        
-      //   if(i>=contentsLength)
-      // case '#':
-      //   if(consecutiveNewLinesCount>0){
-      //     consecutiveNewLinesCount--;
-
+      //===COMMENT Handler
+      case '/':
+        //are we at the start of a new line?
+        if(consecutiveNewLinesCount>0){
+          i++;
+          //is there another "/" after this one?
+          if(i<contentsLength && contents[i]=='/'){
+            //skip the line
+            for(; i<contentsLength && contents[i]!='\n'; i++);
+          }
+        }
+        break;
           
-      //   }
+      case '#':
+        //are we at the start of a new line?
+        if(consecutiveNewLinesCount>0){
+          //skip the line
+          for(; i<contentsLength && contents[i]!='\n'; i++);
+        }
+        break;
       
       //===ESCAPING Handler
       case '\\':
