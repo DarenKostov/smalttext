@@ -102,6 +102,8 @@ class Document{
     //re-processes the contents that were already stored into text blocks and forward links
     void processContents(const std::unordered_map<std::filesystem::path, Document*>&);
 
+    //applies the macros to the contents
+    void applyMacros();
   
   
 

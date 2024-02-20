@@ -153,6 +153,15 @@ void Document::resetForwardLinks(const std::unordered_map<std::filesystem::path,
   }
 }
 
+void Document::applyMacros(){
+
+  std::regex getMacroPattern("(.*)(?<!\\)=(.*)");
+  std::regex applyMacroPattern("\\{([^\\}]+)\\}");
+
+  std::unordered_map<std::string, std::string> macros;
+
+
+}
 
 
 
