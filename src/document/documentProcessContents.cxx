@@ -15,17 +15,6 @@ You should have received a copy of the GNU General Public License along with sma
 If not, see <https://www.gnu.org/licenses/>.
 */
 
-/* TODO
-   USE REGEX FOR THE MACROS!!!!!!
-
-  regex to get macro definition, first group is name, second group is the definition itself
-  (.*)(?<!\\)=(.*)
-
-  regex to get macro execution, if the group contains a "{" reject it
-  \{([^\}]+)\}
-
-*/
-
 #include "document.hxx"
 #include "textBlock.hxx"
 #include <cctype>
@@ -44,6 +33,7 @@ int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t&
 
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   setContents(stream);
+  applyMacros();
   processContents(allDocuments);
 }
 
@@ -124,7 +114,28 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
         startOfTextBlock=true;
         break;
 
+      // //===COMMENT Handler
+      // case '/':
+        
+      //   if(i>=contentsLength)
+      // case '#':
+      //   if(consecutiveNewLinesCount>0){
+      //     consecutiveNewLinesCount--;
+
+          
+      //   }
       
+      //===ESCAPING Handler
+      case '\\':
+        i++;
+        if(i>=contentsLength){
+          break;
+        }
+
+        //this should be at least a TextBlock for the most part
+        static_cast<TextBlock*>(textBlocks.back())->content+=contents[i];
+        break;
+        
       
       //===SQUARE BRACKETS Handling
       case '[':

@@ -179,8 +179,15 @@ void Document::applyMacros(){
     std::string pattern{"{"+name+"}"};
     std::size_t replaceLength{replaceWith.size()};
 
-    //apply the macro whereever it appears
+    //apply the macro wherever it appears
     for(std::string::size_type i{0}; i!=std::string::npos; i=contents.find(pattern, i)){
+
+      //Handle escaping
+      if(i!=0 && contents[i-1]=='\\'){
+        i++;
+        continue;
+      }
+      
       contents.replace(i, replaceLength, pattern);
 
       //lets not waste time trying to match the thing we just replaced
