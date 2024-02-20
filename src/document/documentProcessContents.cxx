@@ -74,7 +74,6 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
   int consecutiveUnderScoreCount{0};
   int consecutiveCaretCount{0};
   int consecutiveTildeCount{0};
-  int consecutiveExclamationsAfterNewLine{0};
  
   bool startOfTextBlock{true};
       
@@ -113,21 +112,6 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
         startOfTextBlock=true;
         break;
 
-      case '!':
-        if(consecutiveNewLinesCount==0){
-          break;
-        }
-        consecutiveExclamationsAfterNewLine++;
-
-        /*
-
-          Yeah sure you can do that:
-      
-          __*! Underlined and bold Heading
-
-        */
-      
-        break;
       
       
       //===SQUARE BRACKETS Handling
@@ -225,6 +209,9 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
           //add a separator block
           if(consecutiveNewLinesCount>1){
 
+            //reset heading
+            currentHeading=4;
+            
             //newlines? new separator!
             textBlocks.push_back(new SeparatorBlock());
         
@@ -237,8 +224,44 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
               static_cast<SeparatorBlock*>(textBlocks.back())->separator=SeparatorBlock::NewChapter;
             }
         
-            consecutiveNewLinesCount=0;
+          //===HEADING Handling
+          //is it an exclamation aka heading while we are on a new line?
+          //in other words, did this line start with a "!"
+          if(contents[i]=='!'){
+            //is there no formating?
+            if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount==0){
 
+              /*
+                Yeah, you can't do that:
+      
+                __*! Underlined and bold Heading
+
+              */
+              
+              currentHeading=0;
+              int originalIndex=i;
+
+              //we are calculating new heading
+              for(;i<contentsLength && contents[i]=='!'; i++){
+                currentHeading++;
+              }
+
+              //is a space (" ") leading the exclamations? Good that is the correct format
+              if(contents[i]==' '){
+                i++;
+
+              //A space (" ") is not leading the exclamations? bad, that is not the correct format
+              }else{
+                //reset the heading and index, as if nothing happened
+                i=originalIndex;
+                currentHeading=4;
+              }
+              
+
+            }
+          }
+
+            
             //we do care actually
             //dont care if we have ** or __ or whatever, newlines take presidence
             // break;
@@ -296,12 +319,13 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
           consecutiveUnderScoreCount=0;
           consecutiveCaretCount=0;
           consecutiveTildeCount=0;
-          consecutiveExclamationsAfterNewLine=0;
+          consecutiveNewLinesCount=0;
  
         }      
         
         startOfTextBlock=false;
-        currentTextBlock+=contents[i];
+        //this should be at least a TextBlock for the most part
+        static_cast<TextBlock*>(textBlocks.back())->content+=contents[i];
         break;
     }
       
