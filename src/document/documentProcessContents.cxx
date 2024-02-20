@@ -40,7 +40,7 @@ int hexToDec(const char&);
 
 //counts the consecutive characters starting from an index, if they dont with a space returns 0
 //be aware, the index inputed is being changed
-int countConsecutiveCharactersBeforeSpace(const std::string& input, int& index, const std::size_t& size, const char& character);
+int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t& index, const std::size_t& size, const char& character);
 
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   setContents(stream);
@@ -88,7 +88,7 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
   std::string currentTextBlock{""};
   
   const auto contentsLength=contents.size();
-  for(int i{0}; i<contentsLength; i++){
+  for(std::size_t i{0}; i<contentsLength; i++){
 
 
     
@@ -260,6 +260,7 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
                   break;            
               }
             }
+          }
 
           //add the new textblock, we got at least 1 character in it.
           textBlocks.push_back(new TextBlock());
@@ -350,10 +351,10 @@ void toggleEmphatic(TextBlock::fontFlags& flags){
 }
 
 
-int countConsecutiveCharactersBeforeSpace(const std::string& input, int& index, const std::size_t& size, const char& character){
+int countConsecutiveCharactersBeforeSpace(const std::string& input, size_t& index, const std::size_t& size, const char& character){
 
     int output{0};
-    int originalIndex=index;
+    std::size_t originalIndex=index;
   
     //we are calculating new heading
     for(;index<size && input[index]=='!'; index++){
