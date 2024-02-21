@@ -122,15 +122,20 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
           //is there another "/" after this one?
           if(i<contentsLength && contents[i]=='/'){
             //skip the line
+            consecutiveNewLinesCount--;
             for(; i<contentsLength && contents[i]!='\n'; i++);
+          }else{
+            i--;
           }
         }
         break;
           
+      //===COMMENT Handler
       case '#':
         //are we at the start of a new line?
         if(consecutiveNewLinesCount>0){
           //skip the line
+          consecutiveNewLinesCount--;
           for(; i<contentsLength && contents[i]!='\n'; i++);
         }
         break;
