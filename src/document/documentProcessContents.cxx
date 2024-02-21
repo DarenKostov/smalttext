@@ -167,8 +167,8 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
             if(i+6>=contentsLength || contents[i+6]!=']')
               break;
 
-            //first character is "d", most likely "defcol" (default color), no need to waste resources checking if it really is "defcol"
-            if(contents[i]=='d'){
+            //5th character is "o", most likely "defcol" (default color), no need to waste resources checking if it really is "defcol"
+            if(contents[i+4]=='o'){
               textColor=DEFAULT_TEXTBLOCK_COLOR;
             }else{
             
@@ -263,11 +263,12 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
             }
         
 
-            //did this line start with a X character
 
 
             //is there no formating?
             if(consecutiveAsteriskCount+consecutiveCaretCount+consecutiveTildeCount+consecutiveUnderScoreCount==0){
+
+              //did this line start with a X character
               switch(contents[i]){
 
                 //===HEADING Handling
