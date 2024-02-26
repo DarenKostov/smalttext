@@ -21,10 +21,17 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <filesystem>
 #include <regex>
 #include <unordered_map>
+#include <SFML/Graphics.hpp>
 
 class MainClass{
 
   private:
+
+    //sfml stuff
+    sf::RenderWindow window;
+    sf::View mainView;
+    sf::Clock clock;
+  
     //variables:
     std::unordered_map<std::filesystem::path, Document*> documents;
     std::filesystem::path workingPath;
@@ -50,6 +57,19 @@ class MainClass{
 
   private:
 
+    //==sfml stuff
+
+    //this performs tasks depending on the actions in the enviroment, like resizing the window 
+    void performActions();
+  
+    //this draws he program, like update but for drawing
+    void draw();
+
+    //this updates the program, like a "loop" function
+    void update();
+
+    //other stuff
+  
     //prints the relationship between documents
     void printLinks();
     void printMentions();
