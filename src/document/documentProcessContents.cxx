@@ -40,6 +40,11 @@ void Document::processContents(std::istream& stream, const std::unordered_map<st
 
 void Document::processContents(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
+  //delete all previous textBlocks
+  for(const auto& textBlock : textBlocks){
+    delete textBlock;
+  }
+  
   textBlocks.clear();
   
   TextBlock::fontFlags flags{TextBlock::Regular};
@@ -161,6 +166,7 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
       
         switch(contents[i]){
           //===COLOR Handling
+          //TODO make [#r] red, [#b] blue, [#y] yellow, [#o] orange, [#p] purple, [#g] green
           case '#':
             i++;
             //make sure that the amount of charcters (6) is correct, otherwise, invalid color, no need to parse

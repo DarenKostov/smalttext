@@ -61,6 +61,11 @@ void MainClass::loadProject(){
   for (auto& [path, document] : documents) {
     document->resetLinks(documents);
   }
+
+  for (auto& [path, document] : documents) {
+    document->processContents(documents);
+  }
+
 }
  
 bool MainClass::loadDocument(const std::filesystem::path& path){
