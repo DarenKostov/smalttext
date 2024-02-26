@@ -17,7 +17,6 @@ If not, see <https://www.gnu.org/licenses/>.
 
 
 #include "mainClass.hxx"
-#include "document/document.hxx"
 #include <cctype>
 #include <iostream>
 #include <regex>
@@ -25,6 +24,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <filesystem>
 #include <fstream>
 #include <tuple>
+#include <unistd.h>
 
 
 MainClass::MainClass(const std::string& path){
@@ -34,6 +34,39 @@ MainClass::MainClass(const std::string& path){
   identifierPattern.assign("<SMALTTEXT:([0-9]+\\.[0-9]+\\.[0-9]+)>");
   defaultFileExtention=".txt";
 
+  window.create(sf::VideoMode(123, 123), "smalttext- "+path);
+  mainView=sf::View(sf::FloatRect(0, 0, 123, 123));
+  mainView.setViewport(sf::FloatRect(0, 0, 1, 1));
+  window.setView(mainView);
+
+
+  
+  if (!(
+    font[Mono][Regular].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Regular.ttf") &&
+    font[Mono][Bold].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Bold.ttf") &&
+    font[Mono][Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Italic.ttf") &&
+    font[Mono][Bold_Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-BoldItalic.ttf")
+    )) {
+    std::cout << "error loading the mono font\n";
+  }
+  if (!(
+    font[Serif][Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Regular.ttf") &&
+    font[Serif][Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Bold.ttf") &&
+    font[Serif][Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Italic.ttf") &&
+    font[Serif][Bold_Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-BoldItalic.ttf")
+    )) {
+    std::cout << "error loading the serif font\n";
+  }
+  if (!(
+    font[Sans][Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Regular.ttf") &&
+    font[Sans][Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Bold.ttf") &&
+    font[Sans][Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Italic.ttf") &&
+    font[Sans][Bold_Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-BoldItalic.ttf")
+    )) {
+    std::cout << "error loading the sans font\n";
+  }
+
+  
 }
 MainClass::~MainClass(){
 
@@ -50,6 +83,19 @@ MainClass::~MainClass(){
 void MainClass::startProgram(){
   loadProject();  
   printLinks();
+
+
+  while(window.isOpen()){
+
+    //drawing 66666-15fps 33333-30fps 16666-60fps 11111-90fps 8333-120fps 4166-240fps 
+    usleep(16666);
+    
+    performActions();
+    update();
+    // draw();
+  }
+
+
 }
 
 void MainClass::loadProject(){

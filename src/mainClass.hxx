@@ -18,6 +18,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include "document/document.hxx"
+#include <SFML/Graphics/Rect.hpp>
 #include <filesystem>
 #include <regex>
 #include <unordered_map>
@@ -31,9 +32,30 @@ class MainClass{
     sf::RenderWindow window;
     sf::View mainView;
     sf::Clock clock;
+    
+    //fonts
+    enum emphasisEnum {Regular, Bold, Italic, Bold_Italic};
+    enum typefaceEnum {Sans, Serif, Mono};
+    std::unordered_map<typefaceEnum, std::unordered_map<emphasisEnum, sf::Font>> font;
+
+    
+    //all the documents and their gui text
+    std::unordered_map<Document*, std::vector<sf::Text>> documentTexts;
+
+    //How much has been scrolled on this particular document
+    std::unordered_map<Document*, int> scrolledAmount;
   
-    //variables:
+    // var[document][index of link].first=link
+    // var[document][index of link].second=area of link
+    std::unordered_map<Document*, std::vector<std::pair<Document*, sf::IntRect>>> documentTextLinks;
+
+    //the current document on screen
+    Document* documentOnScreen;
+  
+    //all documents:
     std::unordered_map<std::filesystem::path, Document*> documents;
+
+    //the project path:
     std::filesystem::path workingPath;
 
 
@@ -45,7 +67,7 @@ class MainClass{
 
   public:
 
-    //constructor, like a atSTartUp function
+    //constructor, like a atStartUp function
     MainClass(const std::string&);
 
     //deconstror
@@ -67,6 +89,14 @@ class MainClass{
 
     //this updates the program, like a "loop" function
     void update();
+
+    //processes the list of textBlocks of a document into actual gui text
+    void processTextBlockList(Document*);
+
+    //scrolls the currect document X amount up or down, down is positive... I think
+    void movePage(const int&);
+
+
 
     //other stuff
   
