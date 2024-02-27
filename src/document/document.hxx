@@ -38,7 +38,14 @@ class Document{
     std::set<Document*> forwardLinks;
 
     //the processed contents into separate text blocks
-    std::vector<DocumentBlock*> textBlocks;
+    std::vector<TextBlock*> textBlocks;
+
+    //is it a restricted or unrestricted document?
+    //NOTE unrestricted allows for macros, while the restricted doesnt
+    TextBlock::type typeOfDocument;
+
+    //when mentioned in another document, how should the font appear?
+    UnrestructedTextBlock preSetting;
        
   public:
 

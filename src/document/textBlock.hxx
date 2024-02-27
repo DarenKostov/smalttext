@@ -52,6 +52,7 @@ struct TextBlock{
 
 };
 
+//no fancy colors and font sizes, simple
 struct RestructedTextBlock : public TextBlock{
 
   virtual type whatAmI(){
@@ -60,6 +61,7 @@ struct RestructedTextBlock : public TextBlock{
   
 };
 
+//a text block with extended features
 struct UnrestructedTextBlock : public TextBlock{
 
   int heading{4};
