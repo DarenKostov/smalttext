@@ -29,23 +29,11 @@ const uint32_t DEFAULT_TEXTBLOCK_COLOR{0x000000ff};
 
 class Document;
 
-struct DocumentBlock{
-  enum type{Separator, Text, DocumentLink, FileLink, UrlLink};
+struct TextBlock{
+  enum type{Restructed, Unrestructed};
   virtual type whatAmI()=0;
-  virtual ~DocumentBlock(){};
-};
+  virtual ~TextBlock(){};
 
-struct SeparatorBlock : public DocumentBlock{
-  enum separatorType{NewLine, NewParagraph, NewChapter};
-
-  separatorType separator{NewLine};
-    
-  type whatAmI(){
-    return Separator;
-  }
-};
-
-struct TextBlock : public DocumentBlock{
   enum fontFlags : unsigned int{
     Regular=0        << 0, //no flags
     Bold=1           << 0,
@@ -57,18 +45,40 @@ struct TextBlock : public DocumentBlock{
     CodeBlock=1      << 6,
   };      
 
-
   fontFlags fontFormat{Regular};
+  std::string contents{""};
+
+  Document* documentLink{nullptr};
+
+};
+
+struct RestructedTextBlock : public TextBlock{
+
+  virtual type whatAmI(){
+    return Restructed;
+  }
+  
+};
+
+struct UnrestructedTextBlock : public TextBlock{
+
   int heading{4};
   uint32_t color{DEFAULT_TEXTBLOCK_COLOR};
   int quoteLevel{0};
   std::string content{""};
 
+  std::filesystem::path path{"/"};
+  std::string url{""};
+
   virtual type whatAmI(){
-    return Text;
+    return Unrestructed;
   }
-      
+
+
+
+  
 };
+  
 
 //https://stackoverflow.com/questions/1448396/how-to-use-enums-as-flags-in-c
 //Bitwise OR
@@ -102,27 +112,4 @@ inline bool operator&=(const TextBlock::fontFlags& left, const TextBlock::fontFl
   return (left&right)==right;
 }
 
-struct TextBlockDocumentLink : public TextBlock{
-  Document* link{nullptr};
-
-  type whatAmI(){
-    return DocumentLink;
-  }
-};
-
-struct TextBlockFileLink : public TextBlock{
-  std::filesystem::path path{"/"};
-
-  type whatAmI(){
-    return FileLink;
-  }
-};
-
-struct TextBlockUrlLink : public TextBlock{
-  std::string url{""};
-
-  type whatAmI(){
-    return UrlLink;
-  }
-};
 
