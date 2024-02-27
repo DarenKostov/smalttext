@@ -68,7 +68,6 @@ struct ExtendedTextBlock : public TextBlock{
   int heading{4};
   uint32_t color{DEFAULT_TEXTBLOCK_COLOR};
   int quoteLevel{0};
-  std::string content{""};
 
   std::filesystem::path path{"/"};
   std::string url{""};

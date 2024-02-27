@@ -32,7 +32,7 @@ int hexToDec(const char&);
 int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t& index, const std::size_t& size, const char& character);
 
 
-ExtendedTextBlock* Document::processMention(int& i, const TextBlock*& previousTextBlock){
+ExtendedTextBlock* Document::processMention(int& i, const TextBlock*& previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   ExtendedTextBlock* output{new ExtendedTextBlock()};
 
   Document* mentionedDocument{nullptr};
@@ -59,11 +59,22 @@ ExtendedTextBlock* Document::processMention(int& i, const TextBlock*& previousTe
     displayedTitleOfMentionedDocument+=contents[i];
   }
 
-  //TODO
-  //get mentioned document from name
+  //find the document with the given name
+  for(const auto& [dontCare, document]: allDocuments){
+    if(document->getTitle()==nameOfMentionedDocument){
+      mentionedDocument=document;
+      break;
+    }
+  }
+  
 
   output->fontFormat |= previousTextBlock->fontFormat;
   output->fontFormat |= mentionedDocument->getPreSetting().fontFormat;
+  output->documentLink=mentionedDocument;
+
+  if(displayedTitleOfMentionedDocument!=""){
+    output->contents=displayedTitleOfMentionedDocument;
+  }
 
   return output;
   

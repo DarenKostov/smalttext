@@ -132,7 +132,7 @@ class Document{
   
     //processes a mention and returns a textblock stating the mentioned document
     //shifts the index to the last character of the mention
-    ExtendedTextBlock* processMention(int& currentIndex, const TextBlock*&);
+    ExtendedTextBlock* processMention(int& currentIndex, const TextBlock*&, const std::unordered_map<std::filesystem::path, Document*>& allDocuments);
   
     void processBrackets(int& currentIndex, std::vector<TextBlock*>&);
   
