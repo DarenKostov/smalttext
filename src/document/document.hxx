@@ -107,7 +107,7 @@ class Document{
     void processContents(std::istream&, const std::unordered_map<std::filesystem::path, Document*>&);
   
     //re-processes the contents that were already stored into text blocks and forward links
-    void processContents(const std::unordered_map<std::filesystem::path, Document*>&);
+    void reProcessContents(const std::unordered_map<std::filesystem::path, Document*>&);
 
     //process the contents in restricted mode
     void processContentsRestricted(const std::unordered_map<std::filesystem::path, Document*>&);
@@ -115,9 +115,8 @@ class Document{
     //process the contents in unrestriced mode
     void processContentsUnrestricted(const std::unordered_map<std::filesystem::path, Document*>&);
   
-    void processMacroOrMention(int& currentIndex, std::vector<TextBlock*>&);
+    void processBrackets(int& currentIndex, std::vector<TextBlock*>&);
   
-    //TODO merge this function into the processing itself
     //applies the macros to the contents
     void applyMacros();
   

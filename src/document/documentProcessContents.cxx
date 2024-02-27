@@ -33,21 +33,21 @@ int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t&
 
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   setContents(stream);
-  applyMacros();
-  processContents(allDocuments);
+  reProcessContents(allDocuments);
 }
 
 
-void Document::processContents(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+void Document::reProcessContents(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
+  //delete all previous textBlocks
   for(const auto& textBlock : textBlocks){
     delete textBlock;
   }
   textBlocks.clear();
 
   if(typeOfDocument==TextBlock::Restructed){
+    applyMacros();
     processContentsRestricted(allDocuments);
-    return;
   }else{
     processContentsUnrestricted(allDocuments);
   }
@@ -56,17 +56,106 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
 
 void Document::processContentsRestricted(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
+
+  int sequentialOpenCurlyBrackets{0};
+  int sequentialClosedCurlyBrackets{0};
+  std::string documenttags{""};
+  std::string documentTitle{""};
+  std::string displayedTitle{""};
+
+  
+  int consecutiveNewLinesCount{0};
+  int consecutiveAsteriskCount{0};
+  int consecutiveUnderScoreCount{0};
+  int consecutiveCaretCount{0};
+  int consecutiveTildeCount{0};
+ 
+  bool startOfTextBlock{true};
+      
+  std::string currentTextBlockContents{""};
+
+  
+  const auto contentsLength=contents.size();
+  for(std::size_t i{0}; i<contentsLength; i++){
+    
+
+    switch(contents[i]){
+
+      case '\n':
+        consecutiveNewLinesCount++;
+        //only start a new word if this is the 2nd or 3rd or etc new line
+        //ignorre single new lines
+        if(consecutiveNewLinesCount>1){
+          startOfTextBlock=true;
+        }
+        break;
+
+      
+      case '*':
+        consecutiveAsteriskCount++;
+        startOfTextBlock=true;
+        break;
+ 
+      case '_':
+        consecutiveUnderScoreCount++;
+        startOfTextBlock=true;
+        break;
+      
+      case '~':
+        consecutiveTildeCount++;
+        startOfTextBlock=true;
+        break;
+      
+      case '^':
+        consecutiveCaretCount++;
+        startOfTextBlock=true;
+        break;
+
+      //===COMMENT Handler
+      case '/':
+        //are we at the start of a new line?
+        if(consecutiveNewLinesCount>0){
+          i++;
+          //is there another "/" after this one?
+          if(i<contentsLength && contents[i]=='/'){
+            //skip the line
+            consecutiveNewLinesCount--;
+            for(; i<contentsLength && contents[i]!='\n'; i++);
+          }else{
+            i--;
+          }
+        }
+        break;
+          
+      //===COMMENT Handler
+      case '#':
+        //are we at the start of a new line?
+        if(consecutiveNewLinesCount>0){
+          //skip the line
+          consecutiveNewLinesCount--;
+          for(; i<contentsLength && contents[i]!='\n'; i++);
+        }
+        break;
+      
+      //===ESCAPING Handler
+      case '\\':
+        i++;
+        if(i>=contentsLength){
+          break;
+        }
+
+        //this should be at least a TextBlock for the most part
+        static_cast<TextBlock*>(textBlocks.back())->contents+=contents[i];
+        break;
+        
+   }
+  }
+
 }
 
 
 void Document::processContentsUnrestricted(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
-  //delete all previous textBlocks
-  for(const auto& textBlock : textBlocks){
-    delete textBlock;
-  }
-  
-  textBlocks.clear();
   
   TextBlock::fontFlags flags{TextBlock::Regular};
   uint32_t textColor{0x000000ff};
