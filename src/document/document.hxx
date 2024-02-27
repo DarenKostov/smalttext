@@ -40,12 +40,12 @@ class Document{
     //the processed contents into separate text blocks
     std::vector<TextBlock*> textBlocks;
 
-    //is it a restricted or unrestricted document?
+    //is it a lite or extended document?
     //NOTE unrestricted allows for macros, while the restricted doesnt
     TextBlock::type typeOfDocument;
 
     //when mentioned in another document, how should the font appear?
-    UnrestructedTextBlock preSetting;
+    ExtendedTextBlock preSetting;
        
   public:
 
@@ -110,10 +110,10 @@ class Document{
     void reProcessContents(const std::unordered_map<std::filesystem::path, Document*>&);
 
     //process the contents in restricted mode
-    void processContentsRestricted(const std::unordered_map<std::filesystem::path, Document*>&);
+    void processContentsLite(const std::unordered_map<std::filesystem::path, Document*>&);
 
     //process the contents in unrestriced mode
-    void processContentsUnrestricted(const std::unordered_map<std::filesystem::path, Document*>&);
+    void processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>&);
   
     void processBrackets(int& currentIndex, std::vector<TextBlock*>&);
   

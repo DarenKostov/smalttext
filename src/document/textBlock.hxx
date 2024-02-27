@@ -29,9 +29,14 @@ const uint32_t DEFAULT_TEXTBLOCK_COLOR{0x000000ff};
 
 class Document;
 
+//no fancy colors and font sizes, simple
 struct TextBlock{
-  enum type{Restructed, Unrestructed};
-  virtual type whatAmI()=0;
+  enum type{Lite, Extended};
+  
+  virtual type whatAmI(){
+    return Lite;
+  }
+
   virtual ~TextBlock(){};
 
   enum fontFlags : unsigned int{
@@ -52,17 +57,13 @@ struct TextBlock{
 
 };
 
-//no fancy colors and font sizes, simple
-struct RestructedTextBlock : public TextBlock{
-
-  virtual type whatAmI(){
-    return Restructed;
-  }
-  
-};
 
 //a text block with extended features
-struct UnrestructedTextBlock : public TextBlock{
+struct ExtendedTextBlock : public TextBlock{
+
+  virtual type whatAmI(){
+    return Extended;
+  }
 
   int heading{4};
   uint32_t color{DEFAULT_TEXTBLOCK_COLOR};
@@ -72,13 +73,6 @@ struct UnrestructedTextBlock : public TextBlock{
   std::filesystem::path path{"/"};
   std::string url{""};
 
-  virtual type whatAmI(){
-    return Unrestructed;
-  }
-
-
-
-  
 };
   
 

@@ -45,16 +45,16 @@ void Document::reProcessContents(const std::unordered_map<std::filesystem::path,
   }
   textBlocks.clear();
 
-  if(typeOfDocument==TextBlock::Restructed){
+  if(typeOfDocument==TextBlock::Extended){
     applyMacros();
-    processContentsRestricted(allDocuments);
+    processContentsLite(allDocuments);
   }else{
-    processContentsUnrestricted(allDocuments);
+    processContentsExtended(allDocuments);
   }
 
 }
 
-void Document::processContentsRestricted(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+void Document::processContentsLite(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
 
   int sequentialOpenCurlyBrackets{0};
@@ -154,7 +154,7 @@ void Document::processContentsRestricted(const std::unordered_map<std::filesyste
 }
 
 
-void Document::processContentsUnrestricted(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+void Extended::processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
   
   TextBlock::fontFlags flags{TextBlock::Regular};
