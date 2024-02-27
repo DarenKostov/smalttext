@@ -31,6 +31,44 @@ int hexToDec(const char&);
 //be aware, the index inputed is being changed
 int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t& index, const std::size_t& size, const char& character);
 
+
+ExtendedTextBlock* Document::processMention(int& i, const TextBlock*& previousTextBlock){
+  ExtendedTextBlock* output{new ExtendedTextBlock()};
+
+  Document* mentionedDocument{nullptr};
+  
+  std::string tagsOfMentionedDocument{""};
+  std::string nameOfMentionedDocument{""};
+  std::string displayedTitleOfMentionedDocument{""};
+
+  //currenty we are at '{'
+  i++;
+  while(contents[i]!='{' && i++){
+    tagsOfMentionedDocument+=contents[i];
+  }
+
+  //currenty we are at '{'
+  i++;
+  while(contents[i]!='}' && i++){
+    nameOfMentionedDocument+=contents[i];
+  }
+
+  //currenty we are at '}'
+  i++;
+  while(contents[i]!='}' && i++){
+    displayedTitleOfMentionedDocument+=contents[i];
+  }
+
+  //TODO
+  //get mentioned document from name
+
+  output->fontFormat |= previousTextBlock->fontFormat;
+  output->fontFormat |= mentionedDocument->getPreSetting().fontFormat;
+
+  return output;
+  
+}
+
 void Document::processContents(std::istream& stream, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   setContents(stream);
   reProcessContents(allDocuments);
@@ -229,12 +267,19 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
           consecutiveCaretCount=0;
           consecutiveTildeCount=0;
  
+          //we are no longer at start of a new block, we just added it
+          startOfTextBlock=false;
         }      
         
-      
-        startOfTextBlock=false;
-        //this should be at least a TextBlock for the most part
-        static_cast<TextBlock*>(textBlocks.back())->contents+=contents[i];
+        //single newlines are ignorred and treated as spaces
+        if(consecutiveNewLinesCount==1){
+          consecutiveNewLinesCount=0;
+          textBlocks.back()->contents+=' ';
+        }else{
+          //add the character to this textBlock
+          textBlocks.back()->contents+=contents[i];
+        }
+
         break;
     }
   }
@@ -243,6 +288,9 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
 
 void Document::processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
+  //do nothing for now
+  
+  /*
   
   TextBlock::fontFlags flags{TextBlock::Regular};
   uint32_t textColor{0x000000ff};
@@ -558,6 +606,7 @@ void Document::processContentsExtended(const std::unordered_map<std::filesystem:
       
   }
   
+  */
 }
 
 void toggleEmphatic(TextBlock::fontFlags& flags){

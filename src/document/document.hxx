@@ -31,10 +31,10 @@ class Document{
     std::string title;    
     std::string contents;
   
-    //what this document is linking to
+    //what documents are linking to this document
     std::set<Document*> backwardLinks;
 
-    //what document are linking to this file
+    //what this document is linking to
     std::set<Document*> forwardLinks;
 
     //the processed contents into separate text blocks
@@ -51,14 +51,29 @@ class Document{
 
     //==constructors & deconstructors
   
-    //document constructor, requres a title.
-    Document(const std::string&);
+    //document constructor, requres a title and a type of document.
+    Document(const std::string&, const TextBlock::type&);
 
-    //document constructor, requres a title and an istream with the contents.
-    Document(const std::string&, std::istream&);
+    //document constructor, requres a title, a type of document, and an istream with the contents.
+    Document(const std::string&, const TextBlock::type&, std::istream&);
 
     //document deconstructor
     ~Document();
+  
+    //==Document info as a whole stuff
+
+    //gets the type of document
+    TextBlock::type geType();
+    
+    //sets the type of document and returns the new supposed contents of the document to be replaced
+    //this changes the contents variable!
+    const std::string& setType(const TextBlock::type&);
+
+    //sets the preSetting
+    void setPreSetting(const ExtendedTextBlock&);
+
+    //gets the preSetting
+    const ExtendedTextBlock& getPreSetting();
   
     //==Title stuff
   
@@ -98,7 +113,7 @@ class Document{
     void setContents(std::istream&);
 
     //gives you the contents of the document
-    std::string getContents();
+    const std::string& getContents();
   
     //gives you the processed textBlocks
     const std::vector<TextBlock*> getTextBlocks();
@@ -114,6 +129,10 @@ class Document{
 
     //process the contents in unrestriced mode
     void processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>&);
+  
+    //processes a mention and returns a textblock stating the mentioned document
+    //shifts the index to the last character of the mention
+    ExtendedTextBlock* processMention(int& currentIndex, const TextBlock*&);
   
     void processBrackets(int& currentIndex, std::vector<TextBlock*>&);
   
