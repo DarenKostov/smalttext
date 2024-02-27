@@ -19,6 +19,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "document/document.hxx"
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <filesystem>
 #include <regex>
 #include <unordered_map>
@@ -47,7 +48,7 @@ class MainClass{
   
     // var[document][index of link].first=link
     // var[document][index of link].second=area of link
-    std::unordered_map<Document*, std::vector<std::pair<Document*, sf::IntRect>>> documentTextLinks;
+    std::unordered_map<Document*, std::vector<std::pair<Document*, sf::RectangleShape>>> documentTextLinks;
 
     //the current document on screen
     Document* documentOnScreen;
