@@ -45,7 +45,7 @@ void Document::reProcessContents(const std::unordered_map<std::filesystem::path,
   }
   textBlocks.clear();
 
-  if(typeOfDocument==TextBlock::Extended){
+  if(typeOfDocument==TextBlock::Lite){
     applyMacros();
     processContentsLite(allDocuments);
   }else{
@@ -56,6 +56,7 @@ void Document::reProcessContents(const std::unordered_map<std::filesystem::path,
 
 void Document::processContentsLite(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
+  TextBlock::fontFlags flags{TextBlock::Regular};
 
   int sequentialOpenCurlyBrackets{0};
   int sequentialClosedCurlyBrackets{0};
@@ -148,13 +149,99 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
         static_cast<TextBlock*>(textBlocks.back())->contents+=contents[i];
         break;
         
-   }
-  }
+      default:
 
+        //if this is a brand new text block we are talking about
+        if(startOfTextBlock){
+          
+          //===HANDLE NEWLINES FIRST
+          //add a separator block
+          if(consecutiveNewLinesCount>1){
+            
+            //newlines? new separator!
+            textBlocks.push_back(new TextBlock());
+        
+            //TODO I don't like this approach, should change it later
+
+            //new paragraph
+            if(consecutiveNewLinesCount==2){
+              textBlocks.back()->contents="\n";
+            //new section
+            }else if(consecutiveNewLinesCount==3){
+              textBlocks.back()->contents="\n\n";
+            //new chapter
+            }else if(consecutiveNewLinesCount>=4){
+              textBlocks.back()->contents="\n\n\n";
+            }
+        
+            //reset this
+            consecutiveNewLinesCount=0;
+
+          }
+
+          //add the new textblock, we got at least 1 character in it.
+          textBlocks.push_back(new TextBlock());
+
+
+          //===BOLD handling
+          if(consecutiveAsteriskCount==1){
+            //if not bold, bold; if bold, unbold
+            flags ^= TextBlock::fontFlags::Bold;
+
+          //===EMPHATIC handling
+          }else if(consecutiveAsteriskCount>=2){
+            //if not emphatic, emphatic; if emphatic, un-emphatic
+            toggleEmphatic(flags);
+          }
+        
+          //===ITALIC handling
+          if(consecutiveAsteriskCount==1){
+            //if not italic, italicize; if italic, un-italicize
+            flags ^= TextBlock::fontFlags::Italic;
+
+          //===UNDERLINE handling
+          }else if(consecutiveAsteriskCount>=2){
+            //if not underlined, underline; if underlined, un-underline
+            flags ^= TextBlock::fontFlags::Underlined;
+          }
+                    
+          //===SUB-CRIPT handling
+          if(consecutiveTildeCount==1){
+            flags ^= TextBlock::fontFlags::SubScript;
+
+          //===STRIKE-THROUGH handling
+          }else if(consecutiveTildeCount>=2){
+            flags ^= TextBlock::fontFlags::StrickeThrough;
+          }
+
+          //===SUPER-SCRIPT handling
+          if(consecutiveCaretCount>=1){
+            flags ^= TextBlock::fontFlags::SuperScript;
+          }
+        
+          textBlocks.back()->fontFormat=flags;
+          
+        
+          //reset these
+          consecutiveAsteriskCount=0;
+          consecutiveUnderScoreCount=0;
+          consecutiveUnderScoreCount=0;
+          consecutiveCaretCount=0;
+          consecutiveTildeCount=0;
+ 
+        }      
+        
+      
+        startOfTextBlock=false;
+        //this should be at least a TextBlock for the most part
+        static_cast<TextBlock*>(textBlocks.back())->contents+=contents[i];
+        break;
+    }
+  }
 }
 
 
-void Extended::processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+void Document::processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
   
   TextBlock::fontFlags flags{TextBlock::Regular};
@@ -263,7 +350,7 @@ void Extended::processContentsExtended(const std::unordered_map<std::filesystem:
         }
 
         //this should be at least a TextBlock for the most part
-        static_cast<TextBlock*>(textBlocks.back())->content+=contents[i];
+        static_cast<TextBlock*>(textBlocks.back())->contents+=contents[i];
         break;
         
       
@@ -465,7 +552,7 @@ void Extended::processContentsExtended(const std::unordered_map<std::filesystem:
       
         startOfTextBlock=false;
         //this should be at least a TextBlock for the most part
-        static_cast<TextBlock*>(textBlocks.back())->content+=contents[i];
+        static_cast<TextBlock*>(textBlocks.back())->contents+=contents[i];
         break;
     }
       
