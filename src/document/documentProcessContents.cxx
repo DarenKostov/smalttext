@@ -40,6 +40,27 @@ void Document::processContents(std::istream& stream, const std::unordered_map<st
 
 void Document::processContents(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
+  for(const auto& textBlock : textBlocks){
+    delete textBlock;
+  }
+  textBlocks.clear();
+
+  if(typeOfDocument==TextBlock::Restructed){
+    processContentsRestricted(allDocuments);
+    return;
+  }else{
+    processContentsUnrestricted(allDocuments);
+  }
+
+}
+
+void Document::processContentsRestricted(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+
+}
+
+
+void Document::processContentsUnrestricted(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+
   //delete all previous textBlocks
   for(const auto& textBlock : textBlocks){
     delete textBlock;
