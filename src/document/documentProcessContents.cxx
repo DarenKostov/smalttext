@@ -32,7 +32,7 @@ int hexToDec(const char&);
 int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t& index, const std::size_t& size, const char& character);
 
 
-ExtendedTextBlock* Document::processMention(int& i, const TextBlock*& previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+ExtendedTextBlock* Document::processMention(size_t& i, const TextBlock*& previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   ExtendedTextBlock* output{new ExtendedTextBlock()};
 
   Document* mentionedDocument{nullptr};
@@ -42,20 +42,18 @@ ExtendedTextBlock* Document::processMention(int& i, const TextBlock*& previousTe
   std::string displayedTitleOfMentionedDocument{""};
 
   //currenty we are at '{'
-  i++;
-  while(contents[i]!='{' && i++){
+
+  for(i++; contents[i]!='{' && i<contents.size(); i++){
     tagsOfMentionedDocument+=contents[i];
   }
-
   //currenty we are at '{'
-  i++;
-  while(contents[i]!='}' && i++){
+
+  for(i++; contents[i]!='}' && i<contents.size(); i++){
     nameOfMentionedDocument+=contents[i];
   }
-
   //currenty we are at '}'
-  i++;
-  while(contents[i]!='}' && i++){
+
+  for(i++; contents[i]!='}' && i<contents.size(); i++){
     displayedTitleOfMentionedDocument+=contents[i];
   }
 
@@ -157,6 +155,12 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
         break;
       
       case '^':
+        consecutiveCaretCount++;
+        startOfTextBlock=true;
+        break;
+
+      case '{':
+        textBlocks.push_back();
         consecutiveCaretCount++;
         startOfTextBlock=true;
         break;
