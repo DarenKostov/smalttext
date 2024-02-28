@@ -72,6 +72,8 @@ ExtendedTextBlock* Document::processMention(size_t& i, const TextBlock* previous
 
   if(displayedTitleOfMentionedDocument!=""){
     output->contents=displayedTitleOfMentionedDocument;
+  }else{
+    output->contents=nameOfMentionedDocument;
   }
 
   return output;
