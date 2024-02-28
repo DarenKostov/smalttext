@@ -32,7 +32,7 @@ int hexToDec(const char&);
 int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t& index, const std::size_t& size, const char& character);
 
 
-ExtendedTextBlock* Document::processMention(size_t& i, const TextBlock*& previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+ExtendedTextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   ExtendedTextBlock* output{new ExtendedTextBlock()};
 
   Document* mentionedDocument{nullptr};
@@ -160,8 +160,10 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
         break;
 
       case '{':
-        textBlocks.push_back();
-        consecutiveCaretCount++;
+        //add the mention, without changing any of the CURRENT formatting
+        textBlocks.push_back(processMention(i, textBlocks.back(), allDocuments));
+
+        //the next chcrecter will start the next textblock with the CURRENT formatting
         startOfTextBlock=true;
         break;
 
