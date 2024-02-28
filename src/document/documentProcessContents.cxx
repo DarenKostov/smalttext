@@ -260,7 +260,7 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
             flags ^= TextBlock::fontFlags::Underlined;
           }
                     
-          //===SUB-CRIPT handling
+          //===SUB-SCRIPT handling
           if(consecutiveTildeCount==1){
             flags ^= TextBlock::fontFlags::SubScript;
 
