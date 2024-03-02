@@ -208,9 +208,9 @@ bool MainClass::makeDocument(const std::string& title){
   //fill in a template
   newFileStream << "<SMALTTEXT:0.0.0>\n";
   newFileStream << "Title= " << title << "\n";
+  newFileStream << "Type= Lite\n";
   newFileStream << "Tags= \n";
   newFileStream << "PreSetting= \n";
-  newFileStream << "PostSetting= \n";
   newFileStream << "Description= \n";
   newFileStream << "Contents:\n\n";
 

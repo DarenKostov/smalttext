@@ -3,7 +3,7 @@
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90050
 
 CXX= g++
-CXXFLAGS= -std=c++17 -lstdc++fs
+CXXFLAGS= -std=c++20 -lstdc++fs
 OBJFILES= bin/main.o bin/licence.o bin/mainLoadDocument.o bin/mainClass.o bin/document.o
 TARGET= bin/smalttext
 
