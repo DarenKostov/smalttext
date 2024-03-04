@@ -271,7 +271,7 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
 
           //===STRIKE-THROUGH handling
           }else if(consecutiveTildeCount>=2){
-            flags ^= TextBlock::fontFlags::StrickeThrough;
+            flags ^= TextBlock::fontFlags::StrikeThrough;
           }
 
           //===SUPER-SCRIPT handling
@@ -594,7 +594,7 @@ void Document::processContentsExtended(const std::unordered_map<std::filesystem:
 
           //===STRIKE-THROUGH handling
           }else if(consecutiveTildeCount>=2){
-            flags ^= TextBlock::fontFlags::StrickeThrough;
+            flags ^= TextBlock::fontFlags::StrikeThrough;
           }
 
           //===SUPER-SCRIPT handling
@@ -682,7 +682,7 @@ void Document::setPreSetting(const std::string& in){
         break;
 
       case 5:
-        preSetting.fontFormat ^= TextBlock::fontFlags::StrickeThrough;
+        preSetting.fontFormat ^= TextBlock::fontFlags::StrikeThrough;
         break;
 
       case 6:

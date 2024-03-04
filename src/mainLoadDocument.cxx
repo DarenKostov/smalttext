@@ -85,7 +85,7 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
   
   //the rest of the input stream is the contents of the document 
   document=new Document(title, type, inputStream);
-
+  document->setPreSetting(preSetting);
   
   return true;
 }

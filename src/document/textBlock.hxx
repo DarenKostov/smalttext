@@ -44,7 +44,7 @@ struct TextBlock{
     Bold=1           << 0,
     Italic=1         << 1,
     Underlined=1     << 2,
-    StrickeThrough=1 << 3,
+    StrikeThrough=1 << 3,
     SubScript=1     << 4,
     SuperScript=1    << 5,
     CodeBlock=1      << 6,
