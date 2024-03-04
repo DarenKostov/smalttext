@@ -30,6 +30,7 @@ emphatic: start with one and only one "*", do not contain 2 or more "*", end wit
 
 
 #include "document.hxx"
+#include "textBlock.hxx"
 #include <algorithm>
 #include <iostream>
 #include <regex>
@@ -119,6 +120,7 @@ void Document::setPreSetting(const ExtendedTextBlock& input){
   //TODO
   //make sure you update the backward links about this change, their TextBlock vector will still have the own preSetting
 }
+
 
 const ExtendedTextBlock& Document::getPreSetting(){
   return preSetting;

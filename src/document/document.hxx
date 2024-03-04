@@ -18,6 +18,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
 #include <filesystem>
+#include <regex>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -47,6 +48,9 @@ class Document{
     //when mentioned in another document, how should the font appear?
     ExtendedTextBlock preSetting;
        
+    //the regex pattern for the presetting
+    const static std::regex preSettingPattern;
+
   public:
 
     //==constructors & deconstructors
@@ -71,6 +75,7 @@ class Document{
 
     //sets the preSetting
     void setPreSetting(const ExtendedTextBlock&);
+    void setPreSetting(const std::string&);
 
     //gets the preSetting
     const ExtendedTextBlock& getPreSetting();
@@ -138,14 +143,8 @@ class Document{
   
     //applies the macros to the contents
     void applyMacros();
-  
-  
-
-
-
-
-
-  
+ 
     
 };
+
 

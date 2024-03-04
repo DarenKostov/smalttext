@@ -21,6 +21,9 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <cmath>
 #include <cstddef>
 
+const std::regex Document::preSettingPattern{std::regex(R"(\*\*)|(__)|(\*)|(_)|(~~)|(~)|(^)|(\[\#[0-9a-fA-F]{6}\])")};
+
+
 //makes the text font emphatic, or non emphatic depending on what it was previously
 void toggleEmphatic(TextBlock::fontFlags&);
 
@@ -627,6 +630,88 @@ void Document::processContentsExtended(const std::unordered_map<std::filesystem:
   
   */
 }
+
+
+void Document::setPreSetting(const std::string& in){
+
+
+  //NOTE Perhaps I can make the whole contents processing using regex
+  std::smatch match;
+
+  std::sregex_iterator regIterator(contents.begin(), contents.end(), preSettingPattern);
+  std::sregex_iterator endIterator;
+
+
+  for(; regIterator!=endIterator; regIterator++){
+    match = *regIterator;
+
+      //0 is whole string
+      //1 is emphatic
+      //2 is underlines
+      //3 is bold
+      //4 is italic
+      //5 is strike through
+      //6 is sub script
+      //7 super script
+      //8 is color
+
+
+    //TODO Check if the index stops where it sould actually stop
+    int index{0};
+    for(; regIterator->str(index)==""; index++);
+
+    switch(index){
+      case 0:
+        //what?
+        break;
+
+      case 1:
+        toggleEmphatic(preSetting.fontFormat);
+        break;
+  
+      case 2:
+        preSetting.fontFormat ^= TextBlock::fontFlags::Underlined;
+        break;
+  
+      case 3:
+        preSetting.fontFormat ^= TextBlock::fontFlags::Bold;
+        break;
+
+      case 4:
+        preSetting.fontFormat ^= TextBlock::fontFlags::Italic;
+        break;
+
+      case 5:
+        preSetting.fontFormat ^= TextBlock::fontFlags::StrickeThrough;
+        break;
+
+      case 6:
+        preSetting.fontFormat ^= TextBlock::fontFlags::SubScript;
+        break;
+
+      case 7:
+        preSetting.fontFormat ^= TextBlock::fontFlags::SuperScript;
+        break;
+  
+      case 8:
+        //TODO handle colro
+        //what?
+        break;
+  
+      default:
+        //what?
+        break;
+
+    }
+
+
+    auto mentionedDocumentTitle=regIterator->str(2);
+    Document* documentPointer{nullptr};
+  
+  }
+}
+
+
 
 void toggleEmphatic(TextBlock::fontFlags& flags){
   bool emphatic{false};

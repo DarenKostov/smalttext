@@ -30,7 +30,7 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
   std::string title="";
   std::string tagLine="";
   std::string preSetting="";
-  std::string type="";
+  TextBlock::type type{TextBlock::Extended};
   std::string description="";
   std::vector<std::string> tags;
 
@@ -81,25 +81,10 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
   
   
   }
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, title, '\n');
-  
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, tagLine, '\n');
-
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, preSetting, '\n');
-  
-  inputStream.ignore(100, '=');
-  inputStream.ignore(100, ' ');
-  std::getline(inputStream, description, '\n');
   
   
   //the rest of the input stream is the contents of the document 
-  document=new Document(title, inputStream);
+  document=new Document(title, type, inputStream);
 
   
   return true;
