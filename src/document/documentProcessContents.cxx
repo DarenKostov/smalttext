@@ -20,20 +20,36 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <cctype>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <unordered_map>
 
-const std::regex Document::preSettingPattern{std::regex(R"(\*\*)|(__)|(\*)|(_)|(~~)|(~)|(^)|(\[\#[0-9a-fA-F]{6}\])")};
+const std::regex Document::preSettingPattern{std::regex(R"(\*\*)|(__)|(\*)|(_)|(~~)|(~)|(\^)|(\[\#[0-9a-fA-F]{6}\])|(\[#[rgbymcoptlPLwBG]\])|(\[\#.+\])")};
+/* example: 
 
+  **__*_~~~^[#778899][#t][#pink]
+
+*/
 
 //makes the text font emphatic, or non emphatic depending on what it was previously
 void toggleEmphatic(TextBlock::fontFlags&);
 
+//TODO make ths hex char to hex uint32_t
 //give it hex char, itll give you dec int; 0 if invalid
 int hexToDec(const char&);
+
+//give it a word, itll give you a color. the word does not have to be complete
+uint32_t wordColorToHex(const char*);
+
+//give it a char, itll give you a color.
+uint32_t charColorToHex(const char&);
 
 //counts the consecutive characters starting from an index, if they dont with a space returns 0
 //be aware, the index inputed is being changed
 int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t& index, const std::size_t& size, const char& character);
 
+//makes all chars lower
+char* allTolower(char*);
 
 ExtendedTextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
   ExtendedTextBlock* output{new ExtendedTextBlock()};
@@ -636,12 +652,11 @@ void Document::processContentsExtended(const std::unordered_map<std::filesystem:
 void Document::setPreSetting(const std::string& in){
 
 
-  //NOTE Perhaps I can make the whole contents processing using regex
+  //NOTE Perhaps I can make the whole contents processing only using regex
   std::smatch match;
 
   std::sregex_iterator regIterator(contents.begin(), contents.end(), preSettingPattern);
   std::sregex_iterator endIterator;
-
 
   for(; regIterator!=endIterator; regIterator++){
     match = *regIterator;
@@ -654,7 +669,10 @@ void Document::setPreSetting(const std::string& in){
       //5 is strike through
       //6 is sub script
       //7 super script
-      //8 is color
+      //8 is color in hex
+      //9 is color in a single char
+      //10 is color in word form
+      //11 is 10 but just the word
 
 
     //TODO Check if the index stops where it sould actually stop
@@ -695,8 +713,25 @@ void Document::setPreSetting(const std::string& in){
         break;
   
       case 8:
-        //TODO handle colour
-        //what?
+            
+        //reset the color
+        preSetting.color=0x000000ff;
+
+        // 012345678
+        // [#ffffff]
+        
+        //add values to the color
+        for(int j=0; j<6; j++){
+          preSetting.color+=hexToDec(regIterator->str(8)[j+2])*std::pow(16, j+2);
+        }
+        break;    
+      
+      case 9:
+        preSetting.color=charColorToHex(regIterator->str(9)[2]);
+        break;
+
+      case 10:
+        preSetting.color=wordColorToHex(regIterator->str(11).c_str());
         break;
   
       default:
@@ -704,11 +739,6 @@ void Document::setPreSetting(const std::string& in){
         break;
 
     }
-
-
-    auto mentionedDocumentTitle=regIterator->str(2);
-    Document* documentPointer{nullptr};
-  
   }
 }
 
@@ -758,22 +788,98 @@ int countConsecutiveCharactersBeforeSpace(const std::string& input, size_t& inde
     }
 }
 
-/*This performed worse
-int hexToDec(const char& in){
-  if(in>='0' && in<='9'){
-    return in-'0';
+char* allTolower(char* in){
+  for(size_t i{0}; in[i]!='\0'; i++){
+    in[i]=std::tolower(in[i]);
   }
-  if(in>='a' && in<='f'){
-    return in-'a'+10;
-  }
-  if(in>='A' && in<='F'){
-    return in-'A'+10;
-  }
-  return 0;
+  return in;
 }
-*/
 
-//this performed better
+
+uint32_t wordColorToHex(const char* in){
+
+  //heh, const is no more
+  allTolower((char*)in);
+
+  if(std::strstr("red", in)!=nullptr){
+    return 0xff000000; //red
+  }else if(std::strstr("green", in)!=nullptr){
+    return 0x00ff0000; //green
+  }else if(std::strstr("blue", in)!=nullptr){
+    return 0x0000ff00; //blue
+  }else if(std::strstr("yellow", in)!=nullptr){
+    return 0xffff0000; //yellow
+  }else if(std::strstr("magenta", in)!=nullptr){
+    return 0xff00ff00; //magenta
+  }else if(std::strstr("cyan", in)!=nullptr){
+    return 0x00ffff00; //cyan
+  }else if(std::strstr("orange", in)!=nullptr){
+    return 0xff7f0000; //orange
+  }else if(std::strstr("purple", in)!=nullptr){
+    return 0x7f00ff00; //purple
+  }else if(std::strstr("turquoise", in)!=nullptr){
+    return 0x00ff7f00; //turquoise
+  }else if(std::strstr("lime", in)!=nullptr){
+    return 0x7fff0000; //lime
+  }else if(std::strstr("pink", in)!=nullptr){
+    return 0xff007f00; //pink
+  }else if(std::strstr("light blue", in)!=nullptr){
+    return 0x007fff00; //light blue
+  }else if(std::strstr("white", in)!=nullptr){
+    return 0xffffff00; //white
+  }else if(std::strstr("black", in)!=nullptr){
+    return 0x00000000; //black
+  }else if(std::strstr("gray", in)!=nullptr){
+    return 0x7f7f7f00; //gray
+  }else{
+    //invalid color
+    return 0x5F000000;
+  
+  }
+
+}
+
+uint32_t charColorToHex(const char& in){
+
+  switch(in){
+  case 'r':
+    return 0xff000000; //red
+  case 'g':
+    return 0x00ff0000; //green
+  case 'b':
+    return 0x0000ff00; //blue
+  case 'y':
+    return 0xffff0000; //yellow
+  case 'm':
+    return 0xff00ff00; //magenta
+  case 'c':
+    return 0x00ffff00; //cyan
+  case 'o':
+    return 0xff7f0000; //orange
+  case 'p':
+    return 0x7f00ff00; //purple
+  case 't':
+    return 0x00ff7f00; //turquoise
+  case 'l':
+    return 0x7fff0000; //lime
+  case 'P':
+    return 0xff007f00; //pink
+  case 'L':
+    return 0x007fff00; //light blue
+  case 'w':
+    return 0xffffff00; //white
+  case 'B':
+    return 0x00000000; //black
+  case 'G':
+    return 0x7f7f7f00; //gray
+  default:
+    //invalid color
+    return 0x5F000000;
+  }
+
+}
+
+//this performed better, its essentially a map
 int hexToDec(const char& in){
   switch(in){
     case '0':
