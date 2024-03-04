@@ -71,6 +71,7 @@ ExtendedTextBlock* Document::processMention(size_t& i, const TextBlock* previous
 
   output->fontFormat |= previousTextBlock->fontFormat;
   output->fontFormat |= mentionedDocument->getPreSetting().fontFormat;
+  output->color=mentionedDocument->getPreSetting().color;
   output->documentLink=mentionedDocument;
 
   if(displayedTitleOfMentionedDocument!=""){
@@ -694,7 +695,7 @@ void Document::setPreSetting(const std::string& in){
         break;
   
       case 8:
-        //TODO handle colro
+        //TODO handle colour
         //what?
         break;
   
