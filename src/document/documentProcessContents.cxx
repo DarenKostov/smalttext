@@ -24,7 +24,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <cstring>
 #include <unordered_map>
 
-const std::regex Document::preSettingPattern{std::regex(R"(\*\*)|(__)|(\*)|(_)|(~~)|(~)|(\^)|(\[\#[0-9a-fA-F]{6}\])|(\[#[rgbymcoptlPLwBG]\])|(\[\#.+\])")};
+const std::regex Document::preSettingPattern{std::regex(R"((\*\*)|(__)|(\*)|(_)|(~~)|(~)|(\^)|(\[\#[0-9a-fA-F]{6}\])|(\[#[rgbymcoptlPLwBG]\])|(\[\#.+\]))")};
 /* example: 
 
   **__*_~~~^[#778899][#t][#pink]
