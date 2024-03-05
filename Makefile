@@ -18,7 +18,7 @@ install: all
 
 $(TARGET): bin $(MAINOBJFILES) $(OBJFILES)
 	@echo FINAL BINARY:
-	$(CXX) $(CXXFLAGS) $(MAINOBJFILES) $(OBJFILES) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(SFMLFLAGS) $(MAINOBJFILES) $(OBJFILES) -o $(TARGET)
 	
 bin:
 	mkdir bin

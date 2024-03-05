@@ -105,11 +105,11 @@ void MainClass::loadProject(){
   }
 
   for (auto& [path, document] : documents) {
-    document->resetLinks(documents);
+    // document->resetLinks(documents);
   }
 
   for (auto& [path, document] : documents) {
-    document->processContents(documents);
+    // document->processContents(documents);
   }
 
 }
