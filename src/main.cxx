@@ -69,10 +69,11 @@ void signal_handler(int signal_num){
 
 int main(int argc, char **argv){
 
-  std::string projectPath{""};
+  //if no folder is selected, select the current directory
+  std::string projectPath{"./"};
   
   //check all flags
-  for(int i=0; i<argc; i++){
+  for(int i=1; i<argc; i++){
     std::string thisArg=std::string(argv[i]);
     if(thisArg=="-l" || thisArg=="--licence"){
       printLicence();
