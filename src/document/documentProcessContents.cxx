@@ -674,7 +674,6 @@ void Document::setPreSetting(const std::string& in){
       //10 is color in word form
       //11 is 10 but just the word
 
-
     //TODO Check if the index stops where it sould actually stop
     int index{0};
     for(; regIterator->str(index)==""; index++);
