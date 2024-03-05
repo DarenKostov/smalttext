@@ -6,7 +6,7 @@ CXX= g++
 CXXFLAGS= -std=c++20 -lstdc++fs
 SFMLFLAGS= -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
 MAINOBJFILES= bin/main.o bin/licence.o bin/mainClass.o bin/mainDraw.o bin/mainUpdate.o bin/mainActions.o
-OBJFILES= bin/mainLoadDocument.o bin/document.o
+OBJFILES= bin/mainLoadDocument.o bin/document.o bin/documentProcessContents.o
 TARGET= bin/smalttext
 
 
@@ -54,6 +54,10 @@ bin/mainLoadDocument.o: src/mainLoadDocument.cxx src/mainClass.hxx src/document/
 bin/document.o: src/document/document.cxx src/document/document.cxx
 	@echo DOCUMENT CLASS:
 	$(CXX) $(CXXFLAGS) src/document/document.cxx -c -o bin/document.o
+
+bin/documentProcessContents.o: src/document/documentProcessContents.cxx src/document/documentProcessContents.cxx
+	@echo DOCUMENT PROCESSOR CLASS:
+	$(CXX) $(CXXFLAGS) src/document/documentProcessContents.cxx -c -o bin/documentProcessContents.o
 
 
 

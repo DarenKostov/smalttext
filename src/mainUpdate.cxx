@@ -15,3 +15,11 @@ You should have received a copy of the GNU General Public License along with sma
 If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "mainClass.hxx"
+#include <iostream>
+
+
+void MainClass::update(){
+  std::cout << "Update!!\n";
+
+}

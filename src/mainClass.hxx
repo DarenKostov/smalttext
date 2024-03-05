@@ -92,7 +92,7 @@ class MainClass{
     void update();
 
     //processes the list of textBlocks of a document into actual gui text
-    void processTextBlockList(Document*);
+    void processTextBlockList(Document*){};
 
     //scrolls the currect document X amount up or down, down is positive... I think
     void movePage(const int&);
