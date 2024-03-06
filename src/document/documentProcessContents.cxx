@@ -243,10 +243,10 @@ void Document::processContentsLite(const std::unordered_map<std::filesystem::pat
             //new paragraph
             if(consecutiveNewLinesCount==2){
               textBlocks.back()->contents="\n";
-            //new section
+            //new paragraph and a newline
             }else if(consecutiveNewLinesCount==3){
               textBlocks.back()->contents="\n\n";
-            //new chapter
+            //new section
             }else if(consecutiveNewLinesCount>=4){
               textBlocks.back()->contents="\n\n\n";
             }

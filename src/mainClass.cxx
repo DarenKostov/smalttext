@@ -39,7 +39,8 @@ MainClass::MainClass(const std::string& path){
   mainView.setViewport(sf::FloatRect(0, 0, 1, 1));
   window.setView(mainView);
 
-
+  fontSize=15;
+  fontSpaced=1.5;
   
   if (!(
     font[Mono][Regular].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Regular.ttf") &&
@@ -91,7 +92,7 @@ void MainClass::startProgram(){
     usleep(16666);
     
     performActions();
-    update();
+    // update();
     // draw();
   }
 

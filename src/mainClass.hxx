@@ -66,6 +66,10 @@ class MainClass{
     //the default extention with which a new document is made
     std::string defaultFileExtention;
 
+    //displayed font stuff
+    double fontSize;
+    double fontSpaced;
+  
   public:
 
     //constructor, like a atStartUp function
@@ -92,7 +96,7 @@ class MainClass{
     void update();
 
     //processes the list of textBlocks of a document into actual gui text
-    void processTextBlockList(Document*){};
+    void processTextBlockList(Document*);
 
     //scrolls the currect document X amount up or down, down is positive... I think
     void movePage(const int&);

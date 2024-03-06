@@ -16,9 +16,11 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "mainClass.hxx"
+#include <iostream>
 
 void MainClass::draw(){
 
+  std::cout << "Draw!!\n";
 
   //TODO perhaps make a tab menu on the top with all the documents loaded?
 
@@ -28,9 +30,10 @@ void MainClass::draw(){
   window.setView(mainView);
   
   //set a background
-  sf::RectangleShape background(sf::Vector2f(window.getSize().x, window.getSize().y));
-  background.setFillColor(sf::Color(255, 255, 255));
+  sf::RectangleShape background;
+  background.setFillColor(sf::Color(0, 0, 0));
   background.setPosition(0, 0);
+  background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
   window.draw(background);
 
 
@@ -39,5 +42,6 @@ void MainClass::draw(){
     window.draw(text);
   }
 
-
+  window.display();
+  
 }
