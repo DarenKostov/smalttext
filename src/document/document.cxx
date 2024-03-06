@@ -110,6 +110,9 @@ const TextBlock& Document::getPreSetting(){
   return preSetting;
 }
 
+const std::vector<TextBlock*> Document::getTextBlocks(){
+  return textBlocks;
+}
 
 std::string Document::getTitle(){
   return title;

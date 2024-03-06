@@ -54,10 +54,10 @@ void MainClass::processTextBlockList(Document* chosenOne){
     }
 
 
-  if(textBlock->fontFormat &= TextBlock::fontFlags::StrikeThrough){
+  if(textBlock->fontFormat &= TextBlock::StrikeThrough){
     currentText.setStyle(sf::Text::StrikeThrough);
   }
-  if(textBlock->fontFormat &= TextBlock::fontFlags::Underlined){
+  if(textBlock->fontFormat &= TextBlock::Underlined){
     currentText.setStyle(currentText.getStyle() | sf::Text::Underlined);
   }
 

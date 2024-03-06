@@ -47,7 +47,7 @@ bin/mainActions.o: src/mainActions.cxx src/mainClass.hxx
 	@echo MAIN ACTIONS:
 	$(CXX) $(CXXFLAGS) src/mainActions.cxx -c -o bin/mainActions.o
 
-bin/mainLoadDocument.o: src/mainLoadDocument.cxx src/mainClass.hxx src/document/document.hxx
+bin/mainLoadDocument.o: src/mainLoadDocument.cxx src/mainClass.hxx src/document/document.hxx src/document/textBlock.hxx
 	@echo LOAD DOCUMENTS:
 	$(CXX) $(CXXFLAGS) src/mainLoadDocument.cxx -c -o bin/mainLoadDocument.o
 
@@ -55,7 +55,7 @@ bin/mainProcessTextBlocks.o: src/mainProcessTextBlocks.cxx src/mainClass.hxx src
 	@echo TEXT BLOCKS PROCESSOR:
 	$(CXX) $(CXXFLAGS) src/mainProcessTextBlocks.cxx -c -o bin/mainProcessTextBlocks.o
 
-bin/document.o: src/document/document.cxx src/document/document.cxx
+bin/document.o: src/document/document.cxx src/document/document.cxx src/document/textBlock.hxx
 	@echo DOCUMENT CLASS:
 	$(CXX) $(CXXFLAGS) src/document/document.cxx -c -o bin/document.o
 
