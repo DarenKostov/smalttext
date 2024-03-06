@@ -78,9 +78,13 @@ void MainClass::processTextBlockList(Document* chosenOne){
     currentText.setStyle(currentText.getStyle() | sf::Text::Underlined);
   }
 
-  currentText.setFillColor(textBlock->color);
+  currentText.setFillColor(sf::Color(textBlock->color));
   
-
+  //TODO
+  /*
+    handle headings
+    handle code
+  */
     
 
     documentTexts[chosenOne].push_back(currentText);

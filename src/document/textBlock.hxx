@@ -30,15 +30,8 @@ const uint32_t DEFAULT_TEXTBLOCK_COLOR{0x000000ff};
 class Document;
 
 //no fancy colors and font sizes, simple
+//a text block with extended features
 struct TextBlock{
-  enum type{Lite, Extended};
-  
-  virtual type whatAmI(){
-    return Lite;
-  }
-
-  virtual ~TextBlock(){};
-
   enum fontFlags : unsigned int{
     Regular=0        << 0, //no flags
     Bold=1           << 0,
@@ -55,16 +48,6 @@ struct TextBlock{
 
   Document* documentLink{nullptr};
 
-};
-
-
-//a text block with extended features
-struct ExtendedTextBlock : public TextBlock{
-
-  virtual type whatAmI(){
-    return Extended;
-  }
-
   int heading{4};
   uint32_t color{DEFAULT_TEXTBLOCK_COLOR};
   int quoteLevel{0};
@@ -73,7 +56,7 @@ struct ExtendedTextBlock : public TextBlock{
   std::string url{""};
 
 };
-  
+
 
 //https://stackoverflow.com/questions/1448396/how-to-use-enums-as-flags-in-c
 //Bitwise OR

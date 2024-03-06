@@ -51,8 +51,8 @@ int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t&
 //makes all chars lower
 char* allTolower(char*);
 
-ExtendedTextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
-  ExtendedTextBlock* output{new ExtendedTextBlock()};
+TextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+  TextBlock* output{new TextBlock()};
 
   Document* mentionedDocument{nullptr};
   
@@ -114,16 +114,12 @@ void Document::reProcessContents(const std::unordered_map<std::filesystem::path,
   }
   textBlocks.clear();
 
-  if(typeOfDocument==TextBlock::Lite){
-    applyMacros();
-    processContentsLite(allDocuments);
-  }else{
-    processContentsExtended(allDocuments);
-  }
+  applyMacros();
+  processContents(allDocuments);
 
 }
 
-void Document::processContentsLite(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+void Document::processContents(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
   TextBlock::fontFlags flags{TextBlock::Regular};
 

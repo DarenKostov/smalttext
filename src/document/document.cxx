@@ -38,16 +38,14 @@ emphatic: start with one and only one "*", do not contain 2 or more "*", end wit
 
 
 
-Document::Document(const std::string& name, const TextBlock::type& type){
+Document::Document(const std::string& name){
   setTitle(name);
-  typeOfDocument=type;
 }
 
 
 
-Document::Document(const std::string& name, const TextBlock::type& type, std::istream& text){
+Document::Document(const std::string& name, std::istream& text){
   setTitle(name);
-  typeOfDocument=type;
   setContents(text);
 }
 
@@ -100,21 +98,7 @@ void Document::resetLinks(const std::unordered_map<std::filesystem::path, Docume
 
 }
 
-TextBlock::type Document::geType(){
-  return typeOfDocument;
-}
-
-const std::string& Document::setType(const TextBlock::type& input){
-
-  typeOfDocument=input;
-  
-  //TODO
-  //update the contents with the new format
-  return contents;
-  
-}
-
-void Document::setPreSetting(const ExtendedTextBlock& input){
+void Document::setPreSetting(const TextBlock& input){
   preSetting=input;
 
   //TODO
@@ -122,7 +106,7 @@ void Document::setPreSetting(const ExtendedTextBlock& input){
 }
 
 
-const ExtendedTextBlock& Document::getPreSetting(){
+const TextBlock& Document::getPreSetting(){
   return preSetting;
 }
 

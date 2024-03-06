@@ -19,7 +19,6 @@ If not, see <https://www.gnu.org/licenses/>.
 #include "document/textBlock.hxx"
 #include "mainClass.hxx"
 
-TextBlock::type getDocumentType(const std::string&);
 
 //TODO Make better tag system
 void setDocumentTags(std::string&, std::vector<std::string>&);
@@ -30,7 +29,6 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
   std::string title="";
   std::string tagLine="";
   std::string preSetting="";
-  TextBlock::type type{TextBlock::Extended};
   std::string description="";
   std::vector<std::string> tags;
 
@@ -62,9 +60,6 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
 
     if(currentSettingIdentifier=="Title="){
       title=currentSettingValue;
-      
-    }else if(currentSettingIdentifier=="Type="){
-      type=getDocumentType(currentSettingValue);
     
     }else if(currentSettingIdentifier=="Tags="){
       setDocumentTags(currentSettingValue, tags);
@@ -84,16 +79,12 @@ bool MainClass::loadDocument_0_0_0(std::istream& inputStream, Document*& documen
   
   
   //the rest of the input stream is the contents of the document 
-  document=new Document(title, type, inputStream);
+  document=new Document(title, inputStream);
   document->setPreSetting(preSetting);
   
   return true;
 }
 
-
-TextBlock::type getDocumentType(const std::string& in){
-  return in=="Lite"? TextBlock::Lite : TextBlock::Extended;
-}
 
 void setDocumentTags(std::string& input, std::vector<std::string>& list){
 
