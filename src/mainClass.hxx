@@ -35,9 +35,9 @@ class MainClass{
     sf::Clock clock;
     
     //fonts
-    enum emphasisEnum {Regular, Bold, Italic, Bold_Italic};
+    // enum emphasisEnum {Regular, Bold, Italic, Bold_Italic};
     enum typefaceEnum {Sans, Serif, Mono};
-    std::unordered_map<typefaceEnum, std::unordered_map<emphasisEnum, sf::Font>> font;
+    std::unordered_map<typefaceEnum, std::unordered_map<TextBlock::fontFlags, sf::Font>> font;
 
     
     //all the documents and their gui text

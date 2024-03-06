@@ -47,27 +47,10 @@ void MainClass::processTextBlockList(Document* chosenOne){
 
     currentText.setString(textBlock->contents);
 
-    //TODO make this without ifs
     if(textBlock->fontFormat &= TextBlock::CodeBlock){
-      if(textBlock->fontFormat &= (TextBlock::Italic | TextBlock::Bold)){
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Bold_Italic]);
-      }else if(textBlock->fontFormat &= TextBlock::Bold){
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Bold]);
-      }else if(textBlock->fontFormat &= TextBlock::Italic){
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Italic]);
-      }else{
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Regular]);
-      }
+      currentText.setFont(font[typefaceEnum::Mono][textBlock->fontFormat & (TextBlock::Italic | TextBlock::Bold)]);
     }else{
-      if(textBlock->fontFormat &= (TextBlock::Italic | TextBlock::Bold)){
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Bold_Italic]);
-      }else if(textBlock->fontFormat &= TextBlock::Bold){
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Bold]);
-      }else if(textBlock->fontFormat &= TextBlock::Italic){
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Italic]);
-      }else{
-        currentText.setFont(font[typefaceEnum::Mono][emphasisEnum::Regular]);
-      }
+      currentText.setFont(font[typefaceEnum::Serif][textBlock->fontFormat & (TextBlock::Italic | TextBlock::Bold)]);
     }
 
 
