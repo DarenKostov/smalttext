@@ -115,11 +115,11 @@ void Document::reProcessContents(const std::unordered_map<std::filesystem::path,
   textBlocks.clear();
 
   applyMacros();
-  processContents(allDocuments);
+  processContentsToTextBlocks(allDocuments);
 
 }
 
-void Document::processContents(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+void Document::processContentsToTextBlocks(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
   TextBlock::fontFlags flags{TextBlock::Regular};
 
@@ -321,11 +321,11 @@ void Document::processContents(const std::unordered_map<std::filesystem::path, D
 }
 
 
+//do nothing for now
+/*
 void Document::processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
-  //do nothing for now
   
-  /*
   
   TextBlock::fontFlags flags{TextBlock::Regular};
   uint32_t textColor{0x000000ff};
@@ -641,8 +641,8 @@ void Document::processContentsExtended(const std::unordered_map<std::filesystem:
       
   }
   
-  */
 }
+*/
 
 
 void Document::setPreSetting(const std::string& in){

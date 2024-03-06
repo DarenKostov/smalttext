@@ -120,10 +120,7 @@ class Document{
     void reProcessContents(const std::unordered_map<std::filesystem::path, Document*>&);
 
     //process the contents in restricted mode
-    void processContentsLite(const std::unordered_map<std::filesystem::path, Document*>&);
-
-    //process the contents in unrestriced mode
-    void processContentsExtended(const std::unordered_map<std::filesystem::path, Document*>&);
+    void processContentsToTextBlocks(const std::unordered_map<std::filesystem::path, Document*>&);
   
     //processes a mention and returns a textblock stating the mentioned document
     //shifts the index to the last character of the mention

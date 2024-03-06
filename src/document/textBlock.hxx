@@ -80,6 +80,7 @@ inline TextBlock::fontFlags& operator^=(TextBlock::fontFlags& left, const TextBl
 }
 
 //Bitwise AND
+//right serves as a "mask" of some sort
 constexpr TextBlock::fontFlags operator&(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
   return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) & std::underlying_type_t<TextBlock::fontFlags>(right));
 }
@@ -90,4 +91,11 @@ inline bool operator&=(const TextBlock::fontFlags& left, const TextBlock::fontFl
   return (left&right)==right;
 }
 
+/* TODO
+//not what the <=> operator normaly does
+//checks if the flag or flags are included
+inline bool operator<=>(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+  return (left&right)==right;
+}
+*/
 
