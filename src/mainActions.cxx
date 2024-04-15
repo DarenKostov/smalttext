@@ -29,7 +29,7 @@ void MainClass::performActions(){
         window.close();
         break;
       case sf::Event::Resized:
-        //if screen is resized fix the views dimensions
+        //if screen is resized fix the view's dimensions
         {
           int windowWidth=event.size.width;
           int windowHeight=event.size.height;

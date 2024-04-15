@@ -20,7 +20,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <SFML/Graphics/Text.hpp>
 
 void MainClass::processTextBlockList(Document* chosenOne){
-    documentTexts[chosenOne].clear();
+  documentTexts[chosenOne].clear();
   
   auto textBlocks=chosenOne->getTextBlocks();
 

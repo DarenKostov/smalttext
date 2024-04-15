@@ -15,10 +15,6 @@ You should have received a copy of the GNU General Public License along with sma
 If not, see <https://www.gnu.org/licenses/>.
 */
 
-/*
-  Perhaps not the best way to accomplish what I am trying to do here
-*/
-
 #pragma once
 
 #include <cstdint>
@@ -57,7 +53,6 @@ struct TextBlock{
 
 };
 
-
 //https://stackoverflow.com/questions/1448396/how-to-use-enums-as-flags-in-c
 //Bitwise OR
 constexpr TextBlock::fontFlags operator|(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
@@ -74,13 +69,13 @@ constexpr TextBlock::fontFlags operator^(const TextBlock::fontFlags& left, const
   return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) ^ std::underlying_type_t<TextBlock::fontFlags>(right));
 }
 
-//perform Bitwise XOR, aka, remove this flag if it there, add this flag if it not there
+//perform Bitwise XOR, aka, remove this flag if it's there, add this flag if it's not there
 inline TextBlock::fontFlags& operator^=(TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
   return left=left^right;
 }
 
 //Bitwise AND
-//right serves as a "mask" of some sort
+//right (or left) serves as a "mask" of some sort
 constexpr TextBlock::fontFlags operator&(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
   return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) & std::underlying_type_t<TextBlock::fontFlags>(right));
 }
@@ -91,11 +86,10 @@ inline bool operator&=(const TextBlock::fontFlags& left, const TextBlock::fontFl
   return (left&right)==right;
 }
 
-/* TODO
+// TODO
 //not what the <=> operator normaly does
 //checks if the flag or flags are included
-inline bool operator<=>(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
-  return (left&right)==right;
-}
-*/
+// inline bool operator<=>(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+//   return (left&right)==right;
+// }
 
