@@ -43,26 +43,26 @@ MainClass::MainClass(const std::string& path){
   fontSpaced=1.5;
   
   if (!(
-    font[Mono][TextBlock::Regular].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Regular.ttf") &&
-    font[Mono][TextBlock::Bold].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Bold.ttf") &&
-    font[Mono][TextBlock::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Italic.ttf") &&
-    font[Mono][TextBlock::Bold | TextBlock::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-BoldItalic.ttf")
+    font[Mono][FontFlags::Regular].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Regular.ttf") &&
+    font[Mono][FontFlags::Bold].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Bold.ttf") &&
+    font[Mono][FontFlags::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Italic.ttf") &&
+    font[Mono][FontFlags::Bold | FontFlags::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-BoldItalic.ttf")
     )) {
     std::cout << "error loading the mono font\n";
   }
   if (!(
-    font[Serif][TextBlock::Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Regular.ttf") &&
-    font[Serif][TextBlock::Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Bold.ttf") &&
-    font[Serif][TextBlock::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Italic.ttf") &&
-    font[Serif][TextBlock::Bold | TextBlock::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-BoldItalic.ttf")
+    font[Serif][FontFlags::Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Regular.ttf") &&
+    font[Serif][FontFlags::Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Bold.ttf") &&
+    font[Serif][FontFlags::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Italic.ttf") &&
+    font[Serif][FontFlags::Bold | FontFlags::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-BoldItalic.ttf")
     )) {
     std::cout << "error loading the serif font\n";
   }
   if (!(
-    font[Sans][TextBlock::Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Regular.ttf") &&
-    font[Sans][TextBlock::Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Bold.ttf") &&
-    font[Sans][TextBlock::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Italic.ttf") &&
-    font[Sans][TextBlock::Bold | TextBlock::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-BoldItalic.ttf")
+    font[Sans][FontFlags::Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Regular.ttf") &&
+    font[Sans][FontFlags::Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Bold.ttf") &&
+    font[Sans][FontFlags::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Italic.ttf") &&
+    font[Sans][FontFlags::Bold | FontFlags::Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-BoldItalic.ttf")
     )) {
     std::cout << "error loading the sans font\n";
   }

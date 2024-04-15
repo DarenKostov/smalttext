@@ -47,17 +47,17 @@ void MainClass::processTextBlockList(Document* chosenOne){
 
     currentText.setString(textBlock->contents);
 
-    if(textBlock->fontFormat &= TextBlock::CodeBlock){
-      currentText.setFont(font[typefaceEnum::Mono][textBlock->fontFormat & (TextBlock::Italic | TextBlock::Bold)]);
+    if(textBlock->fontFormat &= FontFlags::CodeBlock){
+      currentText.setFont(font[typefaceEnum::Mono][textBlock->fontFormat & (FontFlags::Italic | FontFlags::Bold)]);
     }else{
-      currentText.setFont(font[typefaceEnum::Serif][textBlock->fontFormat & (TextBlock::Italic | TextBlock::Bold)]);
+      currentText.setFont(font[typefaceEnum::Serif][textBlock->fontFormat & (FontFlags::Italic | FontFlags::Bold)]);
     }
 
 
-  if(textBlock->fontFormat &= TextBlock::StrikeThrough){
+  if(textBlock->fontFormat &= FontFlags::StrikeThrough){
     currentText.setStyle(sf::Text::StrikeThrough);
   }
-  if(textBlock->fontFormat &= TextBlock::Underlined){
+  if(textBlock->fontFormat &= FontFlags::Underlined){
     currentText.setStyle(currentText.getStyle() | sf::Text::Underlined);
   }
 

@@ -25,21 +25,24 @@ const uint32_t DEFAULT_TEXTBLOCK_COLOR{0x000000ff};
 
 class Document;
 
+//is the font bold? underlined? etc?
+enum class FontFlags : unsigned int{
+  Regular=0        << 0, //no flags
+  Bold=1           << 0,
+  Italic=1         << 1,
+  Underlined=1     << 2,
+  StrikeThrough=1  << 3,
+  SubScript=1      << 4,
+  SuperScript=1    << 5,
+  CodeBlock=1      << 6,
+};      
+
+
 //no fancy colors and font sizes, simple
 //a text block with extended features
 struct TextBlock{
-  enum fontFlags : unsigned int{
-    Regular=0        << 0, //no flags
-    Bold=1           << 0,
-    Italic=1         << 1,
-    Underlined=1     << 2,
-    StrikeThrough=1  << 3,
-    SubScript=1      << 4,
-    SuperScript=1    << 5,
-    CodeBlock=1      << 6,
-  };      
 
-  fontFlags fontFormat{Regular};
+  FontFlags fontFormat{FontFlags::Regular};
   std::string contents{""};
 
   Document* documentLink{nullptr};
@@ -55,34 +58,34 @@ struct TextBlock{
 
 //https://stackoverflow.com/questions/1448396/how-to-use-enums-as-flags-in-c
 //Bitwise OR
-constexpr TextBlock::fontFlags operator|(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
-  return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) | std::underlying_type_t<TextBlock::fontFlags>(right));
+constexpr FontFlags operator|(const FontFlags& left, const FontFlags& right){
+  return static_cast<FontFlags>(std::underlying_type_t<FontFlags>(left) | std::underlying_type_t<FontFlags>(right));
 }
 
 //perform Bitwise OR, aka, add this flag, no matter if it is set ot not
-inline TextBlock::fontFlags& operator|=(TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+inline FontFlags& operator|=(FontFlags& left, const FontFlags& right){
   return left=left|right;
 }
 
 //Bitwise XOR
-constexpr TextBlock::fontFlags operator^(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
-  return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) ^ std::underlying_type_t<TextBlock::fontFlags>(right));
+constexpr FontFlags operator^(const FontFlags& left, const FontFlags& right){
+  return static_cast<FontFlags>(std::underlying_type_t<FontFlags>(left) ^ std::underlying_type_t<FontFlags>(right));
 }
 
 //perform Bitwise XOR, aka, remove this flag if it's there, add this flag if it's not there
-inline TextBlock::fontFlags& operator^=(TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+inline FontFlags& operator^=(FontFlags& left, const FontFlags& right){
   return left=left^right;
 }
 
 //Bitwise AND
 //right (or left) serves as a "mask" of some sort
-constexpr TextBlock::fontFlags operator&(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
-  return static_cast<TextBlock::fontFlags>(std::underlying_type_t<TextBlock::fontFlags>(left) & std::underlying_type_t<TextBlock::fontFlags>(right));
+constexpr FontFlags operator&(const FontFlags& left, const FontFlags& right){
+  return static_cast<FontFlags>(std::underlying_type_t<FontFlags>(left) & std::underlying_type_t<FontFlags>(right));
 }
 
 //not what the &= operator normaly does
 //checks if the flag or flags are included
-inline bool operator&=(const TextBlock::fontFlags& left, const TextBlock::fontFlags& right){
+inline bool operator&=(const FontFlags& left, const FontFlags& right){
   return (left&right)==right;
 }
 
