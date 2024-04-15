@@ -37,9 +37,11 @@ void MainClass::draw(){
   window.draw(background);
 
 
-  //draw all document texts of the current document
-  for(const auto& text : documentTexts[documentOnScreen]){
-    window.draw(text);
+  if(documentOnScreen!=nullptr){
+    //draw all document texts of the current document
+    for(const auto& text : documentTexts[documentOnScreen]){
+      window.draw(text);
+    }
   }
 
   window.display();

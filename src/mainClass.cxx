@@ -68,6 +68,9 @@ MainClass::MainClass(const std::string& path){
   }
 
   
+  //no document should be on screen when the program starts
+  documentOnScreen=nullptr;
+  
 }
 MainClass::~MainClass(){
 
@@ -84,7 +87,7 @@ MainClass::~MainClass(){
 void MainClass::startProgram(){
   loadProject();  
   printLinks();
-
+  documentOnScreen=documents.begin()->second;
 
   while(window.isOpen()){
 

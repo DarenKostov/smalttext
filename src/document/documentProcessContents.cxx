@@ -32,7 +32,7 @@ const std::regex Document::preSettingPattern{std::regex(R"((\*\*)|(__)|(\*)|(_)|
 */
 
 //makes the text font emphatic, or non emphatic depending on what it was previously
-void toggleEmphatic(TextBlock::fontFlags&);
+void toggleEmphatic(FontFlags&);
 
 //TODO make ths hex char to hex uint32_t
 //give it hex char, itll give you dec int; 0 if invalid
@@ -121,7 +121,7 @@ void Document::reProcessContents(const std::unordered_map<std::filesystem::path,
 
 void Document::processContentsToTextBlocks(const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
-  TextBlock::fontFlags flags{TextBlock::Regular};
+  FontFlags flags{FontFlags::Regular};
 
   int sequentialOpenCurlyBrackets{0};
   int sequentialClosedCurlyBrackets{0};
@@ -259,7 +259,7 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
           //===BOLD handling
           if(consecutiveAsteriskCount==1){
             //if not bold, bold; if bold, unbold
-            flags ^= TextBlock::fontFlags::Bold;
+            flags ^= FontFlags::Bold;
 
           //===EMPHATIC handling
           }else if(consecutiveAsteriskCount>=2){
@@ -270,26 +270,26 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
           //===ITALIC handling
           if(consecutiveAsteriskCount==1){
             //if not italic, italicize; if italic, un-italicize
-            flags ^= TextBlock::fontFlags::Italic;
+            flags ^= FontFlags::Italic;
 
           //===UNDERLINE handling
           }else if(consecutiveAsteriskCount>=2){
             //if not underlined, underline; if underlined, un-underline
-            flags ^= TextBlock::fontFlags::Underlined;
+            flags ^= FontFlags::Underlined;
           }
                     
           //===SUB-SCRIPT handling
           if(consecutiveTildeCount==1){
-            flags ^= TextBlock::fontFlags::SubScript;
+            flags ^= FontFlags::SubScript;
 
           //===STRIKE-THROUGH handling
           }else if(consecutiveTildeCount>=2){
-            flags ^= TextBlock::fontFlags::StrikeThrough;
+            flags ^= FontFlags::StrikeThrough;
           }
 
           //===SUPER-SCRIPT handling
           if(consecutiveCaretCount>=1){
-            flags ^= TextBlock::fontFlags::SuperScript;
+            flags ^= FontFlags::SuperScript;
           }
         
           textBlocks.back()->fontFormat=flags;
@@ -361,27 +361,27 @@ void Document::setPreSetting(const std::string& in){
         break;
   
       case 2:
-        preSetting.fontFormat ^= TextBlock::fontFlags::Underlined;
+        preSetting.fontFormat ^= FontFlags::Underlined;
         break;
   
       case 3:
-        preSetting.fontFormat ^= TextBlock::fontFlags::Bold;
+        preSetting.fontFormat ^= FontFlags::Bold;
         break;
 
       case 4:
-        preSetting.fontFormat ^= TextBlock::fontFlags::Italic;
+        preSetting.fontFormat ^= FontFlags::Italic;
         break;
 
       case 5:
-        preSetting.fontFormat ^= TextBlock::fontFlags::StrikeThrough;
+        preSetting.fontFormat ^= FontFlags::StrikeThrough;
         break;
 
       case 6:
-        preSetting.fontFormat ^= TextBlock::fontFlags::SubScript;
+        preSetting.fontFormat ^= FontFlags::SubScript;
         break;
 
       case 7:
-        preSetting.fontFormat ^= TextBlock::fontFlags::SuperScript;
+        preSetting.fontFormat ^= FontFlags::SuperScript;
         break;
   
       case 8:
@@ -416,22 +416,22 @@ void Document::setPreSetting(const std::string& in){
 
 
 
-void toggleEmphatic(TextBlock::fontFlags& flags){
+void toggleEmphatic(FontFlags& flags){
   bool emphatic{false};
 
   //check if it's emphatic
-  if(flags &= TextBlock::fontFlags::Bold)
-    if(flags &= TextBlock::fontFlags::Italic)
+  if(flags &= FontFlags::Bold)
+    if(flags &= FontFlags::Italic)
       emphatic=true;
 
   //make emphatic
-  flags |= TextBlock::Bold;
-  flags |= TextBlock::Italic;
+  flags |= FontFlags::Bold;
+  flags |= FontFlags::Italic;
 
   //if it was previously emphatic, make it non emphatic
   if(emphatic){
-  flags ^= TextBlock::Bold;
-  flags ^= TextBlock::Italic;
+  flags ^= FontFlags::Bold;
+  flags ^= FontFlags::Italic;
   }
 
 }
