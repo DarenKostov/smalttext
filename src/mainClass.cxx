@@ -92,7 +92,6 @@ void MainClass::startProgram(){
     documentOnScreen=documents.begin()->second;
   }
 
-  std::cout << documentOnScreen->getTitle() << "===:w\n";
   if(documentOnScreen!=nullptr){
     processTextBlockList(documentOnScreen);
   }
@@ -114,7 +113,7 @@ void MainClass::loadProject(){
 
   for (auto filePath : std::filesystem::directory_iterator(workingPath)) {
     loadDocument(filePath);
-    std::cout << filePath << "\n";
+    // std::cout << filePath << "\n";
   }
 
   for (auto& [path, document] : documents) {

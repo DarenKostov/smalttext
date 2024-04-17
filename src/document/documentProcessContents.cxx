@@ -54,11 +54,9 @@ char* allTolower(char*);
 
 TextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
 
-  std::cout << "bbbbbbbbbbbbbbbbbbbbb\n" << std::flush;
 
   TextBlock* output{new TextBlock()};
 
-  std::cout << "START of the processing mention\n" << std::flush;
   
   Document* mentionedDocument{nullptr};
   
@@ -70,19 +68,19 @@ TextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBloc
 
   for(i++; contents[i]!='{' && i<contents.size(); i++){
     tagsOfMentionedDocument+=contents[i];
-    std::cout << contents[i];
+    // std::cout << contents[i];
   }
   //currenty we are at '{'
 
   for(i++; contents[i]!='}' && i<contents.size(); i++){
     nameOfMentionedDocument+=contents[i];
-    std::cout << contents[i];
+    // std::cout << contents[i];
   }
   //currenty we are at '}'
 
   for(i++; contents[i]!='}' && i<contents.size(); i++){
     displayedTitleOfMentionedDocument+=contents[i];
-    std::cout << contents[i];
+    // std::cout << contents[i];
   }
 
   //find the document with the given name
@@ -92,7 +90,6 @@ TextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBloc
       break;
     }
   }
-  std::cout << "\nend of reading!\n";
 
   output->fontFormat |= previousTextBlock->fontFormat;
   output->fontFormat |= mentionedDocument->getPreSetting().fontFormat;
@@ -153,8 +150,6 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
   const auto contentsLength=contents.size();
   for(std::size_t i{0}; i<contentsLength; i++){
 
-    std::cout << "==" << contents[i] << "==\n";
-    std::cout << "==" << "}" << "==\n";
 
     switch(contents[i]){
 
@@ -188,7 +183,6 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
         break;
 
       case '{':
-        std::cout << "aaaaaaaaaa]]]\n" << std::flush;
         //add the mention, without changing any of the CURRENT formatting
 
         if(textBlocks.empty()){
@@ -199,7 +193,6 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
           textBlocks.push_back(processMention(i, textBlocks.back(), allDocuments));
         }
     
-        std::cout << "zzzzzzzzzzzzzzzz\n" << std::flush;
 
         //the next chcrecter will start the next textblock with the CURRENT formatting
         startOfTextBlock=true;
@@ -335,13 +328,11 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
           textBlocks.back()->contents+=contents[i];
         }
 
-        std::cout << "end of cycle\n";
 
         break;
     }
   }
 
-  std::cout << "end of time\n";
 }
 
 
