@@ -18,6 +18,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include "document/textBlock.hxx"
 #include "mainClass.hxx"
 #include <SFML/Graphics/Text.hpp>
+#include <iostream>
 
 void MainClass::processTextBlockList(Document* chosenOne){
   documentTexts[chosenOne].clear();
@@ -54,23 +55,25 @@ void MainClass::processTextBlockList(Document* chosenOne){
     }
 
 
-  if(textBlock->fontFormat &= FontFlags::StrikeThrough){
-    currentText.setStyle(sf::Text::StrikeThrough);
-  }
-  if(textBlock->fontFormat &= FontFlags::Underlined){
-    currentText.setStyle(currentText.getStyle() | sf::Text::Underlined);
-  }
+    if(textBlock->fontFormat &= FontFlags::StrikeThrough){
+      currentText.setStyle(sf::Text::StrikeThrough);
+    }
+    if(textBlock->fontFormat &= FontFlags::Underlined){
+      currentText.setStyle(currentText.getStyle() | sf::Text::Underlined);
+    }
 
-  currentText.setFillColor(sf::Color(textBlock->color));
+    currentText.setFillColor(sf::Color(textBlock->color));
   
-  //TODO
-  /*
-    handle headings
-    handle code
-  */
+    //TODO
+    /*
+      handle headings
+      handle code
+    */
     
 
-    documentTexts[chosenOne].push_back(currentText);
+      documentTexts[chosenOne].push_back(currentText);
+
+      // std::cout << textBlock->contents << "\n";
   }
   
 

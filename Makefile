@@ -3,7 +3,8 @@
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90050
 
 CXX= g++
-CXXFLAGS= -std=c++20 -lstdc++fs
+# CXXFLAGS= -std=c++20 -lstdc++fs
+CXXFLAGS= -std=c++20 -lstdc++fs -g
 SFMLFLAGS= -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
 MAINOBJFILES= bin/main.o bin/licence.o bin/mainClass.o bin/mainDraw.o bin/mainUpdate.o bin/mainActions.o
 OBJFILES= bin/mainLoadDocument.o bin/document.o bin/documentProcessContents.o bin/mainProcessTextBlocks.o

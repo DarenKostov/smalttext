@@ -34,7 +34,7 @@ MainClass::MainClass(const std::string& path){
   identifierPattern.assign("<SMALTTEXT:([0-9]+\\.[0-9]+\\.[0-9]+)>");
   defaultFileExtention=".txt";
 
-  window.create(sf::VideoMode(123, 123), "smalttext- "+path);
+  // window.create(sf::VideoMode(123, 123), "smalttext- "+path);
   mainView=sf::View(sf::FloatRect(0, 0, 123, 123));
   mainView.setViewport(sf::FloatRect(0, 0, 1, 1));
   window.setView(mainView);
@@ -87,17 +87,25 @@ MainClass::~MainClass(){
 void MainClass::startProgram(){
   loadProject();  
   printLinks();
-  documentOnScreen=documents.begin()->second;
-
-  while(window.isOpen()){
-
-    //drawing 66666-15fps 33333-30fps 16666-60fps 11111-90fps 8333-120fps 4166-240fps 
-    usleep(16666);
-    
-    performActions();
-    // update();
-    // draw();
+  
+  if(!documents.empty()){
+    documentOnScreen=documents.begin()->second;
   }
+
+  std::cout << documentOnScreen->getTitle() << "===:w\n";
+  if(documentOnScreen!=nullptr){
+    processTextBlockList(documentOnScreen);
+  }
+  
+  // while(window.isOpen()){
+
+  //   //drawing 66666-15fps 33333-30fps 16666-60fps 11111-90fps 8333-120fps 4166-240fps 
+  //   usleep(16666);
+    
+  //   performActions();
+  //   // update();
+  //   // draw();
+  // }
 
 
 }
@@ -106,6 +114,7 @@ void MainClass::loadProject(){
 
   for (auto filePath : std::filesystem::directory_iterator(workingPath)) {
     loadDocument(filePath);
+    std::cout << filePath << "\n";
   }
 
   for (auto& [path, document] : documents) {
@@ -113,7 +122,7 @@ void MainClass::loadProject(){
   }
 
   for (auto& [path, document] : documents) {
-    // document->processContents(documents);
+    document->processContentsToTextBlocks(documents);
   }
 
 }

@@ -22,6 +22,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <unordered_map>
 
 const std::regex Document::preSettingPattern{std::regex(R"((\*\*)|(__)|(\*)|(_)|(~~)|(~)|(\^)|(\[\#[0-9a-fA-F]{6}\])|(\[#[rgbymcoptlPLwBG]\])|(\[\#.+\]))")};
@@ -52,8 +53,13 @@ int countConsecutiveCharactersBeforeSpace(const std::string& input, std::size_t&
 char* allTolower(char*);
 
 TextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBlock, const std::unordered_map<std::filesystem::path, Document*>& allDocuments){
+
+  std::cout << "bbbbbbbbbbbbbbbbbbbbb\n" << std::flush;
+
   TextBlock* output{new TextBlock()};
 
+  std::cout << "START of the processing mention\n" << std::flush;
+  
   Document* mentionedDocument{nullptr};
   
   std::string tagsOfMentionedDocument{""};
@@ -64,16 +70,19 @@ TextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBloc
 
   for(i++; contents[i]!='{' && i<contents.size(); i++){
     tagsOfMentionedDocument+=contents[i];
+    std::cout << contents[i];
   }
   //currenty we are at '{'
 
   for(i++; contents[i]!='}' && i<contents.size(); i++){
     nameOfMentionedDocument+=contents[i];
+    std::cout << contents[i];
   }
   //currenty we are at '}'
 
   for(i++; contents[i]!='}' && i<contents.size(); i++){
     displayedTitleOfMentionedDocument+=contents[i];
+    std::cout << contents[i];
   }
 
   //find the document with the given name
@@ -83,7 +92,7 @@ TextBlock* Document::processMention(size_t& i, const TextBlock* previousTextBloc
       break;
     }
   }
-  
+  std::cout << "\nend of reading!\n";
 
   output->fontFormat |= previousTextBlock->fontFormat;
   output->fontFormat |= mentionedDocument->getPreSetting().fontFormat;
@@ -143,7 +152,9 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
   
   const auto contentsLength=contents.size();
   for(std::size_t i{0}; i<contentsLength; i++){
-    
+
+    std::cout << "==" << contents[i] << "==\n";
+    std::cout << "==" << "}" << "==\n";
 
     switch(contents[i]){
 
@@ -155,7 +166,6 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
           startOfTextBlock=true;
         }
         break;
-
       
       case '*':
         consecutiveAsteriskCount++;
@@ -178,8 +188,18 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
         break;
 
       case '{':
+        std::cout << "aaaaaaaaaa]]]\n" << std::flush;
         //add the mention, without changing any of the CURRENT formatting
-        textBlocks.push_back(processMention(i, textBlocks.back(), allDocuments));
+
+        if(textBlocks.empty()){
+          //a hackly way to do this
+          auto temp=TextBlock();
+          textBlocks.push_back(processMention(i, &temp, allDocuments));
+        }else{
+          textBlocks.push_back(processMention(i, textBlocks.back(), allDocuments));
+        }
+    
+        std::cout << "zzzzzzzzzzzzzzzz\n" << std::flush;
 
         //the next chcrecter will start the next textblock with the CURRENT formatting
         startOfTextBlock=true;
@@ -315,9 +335,13 @@ void Document::processContentsToTextBlocks(const std::unordered_map<std::filesys
           textBlocks.back()->contents+=contents[i];
         }
 
+        std::cout << "end of cycle\n";
+
         break;
     }
   }
+
+  std::cout << "end of time\n";
 }
 
 
