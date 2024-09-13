@@ -17,7 +17,6 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "mainClass.hxx"
 #include "documents-and-texts/document.hxx"
-#include "meta-parser/metaparsers.hxx"
 #include "meta-parsers/metaparsers.hxx"
 #include "parsers/parsers.hxx"
 #include <charconv>
@@ -95,8 +94,11 @@ void MainClass::loadFile(const std::filesystem::path& path){
   int metaParserVersion{0};
   int parserVersion{0};
   
+  //should I use array with function pointers?
   switch(metaParserVersion){
-    metaParser0(fileIn, newDocument);
+    case 0:
+      metaParser0(fileIn, newDocument);
+      break;
   }
   
   //get the whole contents because strings are faster than streams in this case
@@ -106,8 +108,11 @@ void MainClass::loadFile(const std::filesystem::path& path){
   //TODO resolve collisions
   documents[newDocument.title]=newDocument;
 
+  //should I use array with function pointers?
   switch(parserVersion){
+    case 0:
     parser0(contentsRaw, documents[newDocument.title]);
+    break;
   }
 
 

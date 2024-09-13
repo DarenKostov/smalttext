@@ -17,7 +17,6 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "parsers.hxx"
 
-
 void parser0(const std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
 
@@ -25,6 +24,7 @@ void parser0(const std::string& input, Document& theDocument){
   TextBlock current;
   current.contents=input;
 
+  //TODO make sure you dont copy strings twice
   output.push_back(current);
 
 
