@@ -16,9 +16,15 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "mainClass.hxx"
+#include "documents-and-texts/document.hxx"
+#include "meta-parser/metaparsers.hxx"
+#include "meta-parsers/metaparsers.hxx"
+#include "parsers/parsers.hxx"
 #include <charconv>
+#include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
+#include <fstream>
 
 
 MainClass::MainClass(const std::filesystem::path& projectPath){
@@ -43,6 +49,19 @@ void MainClass::startProgram(){
   //load all documents magic here
 
 
+  loadFile(workingPath);
+
+  for(auto& [title, document]: documents){
+    std::cout << "New document:\n";
+    std::cout << "Title:" << title << "\n";
+    std::cout << "Contents:\nSOF";
+    std::cout << document.contents[0].contents << "\n";
+    std::cout << "EOF\n";
+    
+  }
+
+  return;
+
   clock.restart();
 
   while(window.isOpen()){
@@ -61,18 +80,35 @@ void MainClass::startProgram(){
 }
 
 
+//TODO make refresh contents
+void MainClass::loadFile(const std::filesystem::path& path){
 
-void MainClass::loadFile(const std::filesystem::path&){
+  std::string contentsRaw{""};
 
-  //open file and parse it
+  //dont worry, performance hit of copying later should be minimal as we are not copying the contents
+  Document newDocument;
+  
+  std::ifstream fileIn;
+  fileIn.open(path);
+  
+  //TODO Parse Version
+  int metaParserVersion{0};
+  int parserVersion{0};
+  
+  switch(metaParserVersion){
+    metaParser0(fileIn, newDocument);
+  }
+  
+  //get the whole contents because strings are faster than streams in this case
+  std::getline(fileIn, contentsRaw, '\0');
+  fileIn.close();
 
-  //get version
+  //TODO resolve collisions
+  documents[newDocument.title]=newDocument;
 
-  //meta parse
-
-  //parse
-
-  //add document
+  switch(parserVersion){
+    parser0(contentsRaw, documents[newDocument.title]);
+  }
 
 
 }
