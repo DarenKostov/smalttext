@@ -133,7 +133,7 @@ void printVersion(){
   std::cout << "GPLv3\n";
   std::cout << "SMALTTEXT\n";
     
-  //Version Major.Minor.Patch
+  //Version MetaParser Parser Counter?
   std::cout << "Version 0.0.0\n";
 
 }

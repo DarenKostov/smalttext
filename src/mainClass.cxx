@@ -27,15 +27,22 @@ If not, see <https://www.gnu.org/licenses/>.
 
 
 MainClass::MainClass(const std::filesystem::path& projectPath){
-  window.create(sf::VideoMode(123, 123), "WXYZ");
-  mainView=sf::View(sf::FloatRect(0, 0, 123, 123));
-  mainView.setViewport(sf::FloatRect(0, 0, 1, 1));
-  window.setView(mainView);
-  window.setVerticalSyncEnabled(true);
+  // window.create(sf::VideoMode(123, 123), "WXYZ");
+  // mainView=sf::View(sf::FloatRect(0, 0, 123, 123));
+  // mainView.setViewport(sf::FloatRect(0, 0, 1, 1));
+  // window.setView(mainView);
+  // window.setVerticalSyncEnabled(true);
 
   workingPath=projectPath;
 
   
+  loadFile(workingPath);
+
+  for(auto& [title, document]: documents){
+    currentDocument=&document;
+    break;
+  }
+
 }
 MainClass::~MainClass(){
 }
@@ -45,19 +52,21 @@ MainClass::~MainClass(){
 void MainClass::startProgram(){
 
 
+
+    std::cout << "New document:\n";
+    std::cout << "Title:" << currentDocument->title << "\n";
+    std::cout << "Contents:\n";
+
+    for(const auto& content : currentDocument->contents){
+      std::cout << "\tContent:\n";
+      std::cout << content.contents << "\n";
+      std::cout << "\tEnd\n";
+    }
+
+
   //load all documents magic here
 
 
-  loadFile(workingPath);
-
-  for(auto& [title, document]: documents){
-    std::cout << "New document:\n";
-    std::cout << "Title:" << title << "\n";
-    std::cout << "Contents:\nSOF";
-    std::cout << document.contents[0].contents << "\n";
-    std::cout << "EOF\n";
-    
-  }
 
   return;
 
@@ -93,14 +102,24 @@ void MainClass::loadFile(const std::filesystem::path& path){
   //TODO Parse Version
   int metaParserVersion{0};
   int parserVersion{0};
+  std::string versionRaw{""};
+  std::getline(fileIn, versionRaw, '\n');
+
+  bool success;
   
   //should I use array with function pointers?
   switch(metaParserVersion){
     case 0:
-      metaParser0(fileIn, newDocument);
+      success=metaParser0(fileIn, newDocument);
       break;
   }
   
+  //no success, no file
+  if(!success){
+    fileIn.close();
+    return;
+  }
+
   //get the whole contents because strings are faster than streams in this case
   std::getline(fileIn, contentsRaw, '\0');
   fileIn.close();
