@@ -28,6 +28,7 @@ struct Document{
   public:
 
     std::string title;
+    std::string description;
     std::vector<TextBlock> contents;
     int version;
     

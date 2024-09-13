@@ -17,6 +17,8 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "mainClass.hxx"
 
+#include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <csignal>
 
@@ -67,20 +69,34 @@ void signal_handler(int signal_num){
 
 int main(int argc, char **argv){
 
+  std::filesystem::path projectPath{std::filesystem::current_path()};
 
   //check all flags
   for(int i=0; i<argc; i++){
-    std::string thisArg=std::string(argv[i]);
-    if(thisArg=="-l" || thisArg=="--licence"){
+    if(strcmp(argv[i], "-l")==0 ||
+       strcmp(argv[i], "--licence")==0){
       printLicence();
       return 0;
-    }else if(thisArg=="-h" || thisArg=="--help"){
+    }else if(strcmp(argv[i], "-h")==0 ||
+             strcmp(argv[i], "--help")==0){
       printHelp();
       return 0;
-    }else if(thisArg=="-v" || thisArg=="--version"){
+    }else if(strcmp(argv[i], "-v")==0 ||
+             strcmp(argv[i], "--version")==0){
       printVersion();
       return 0;
+    }else{
+
+      // must be project directory
+      if(argv[i][0]=='/'){
+        projectPath=argv[i];
+      }else{
+        // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90050
+        projectPath=std::filesystem::current_path()/argv[i];
+      }
+    
     }
+
   }
 
 
@@ -89,7 +105,7 @@ int main(int argc, char **argv){
   signal(SIGINT, signal_handler);
 
 
-  MainClass* mainInstance=new MainClass();
+  MainClass* mainInstance=new MainClass(projectPath);
   atExitFree(mainInstance);
 
   mainInstance->startProgram();
@@ -101,6 +117,10 @@ int main(int argc, char **argv){
 
 
 void printHelp(){
+
+
+  std::cout << "smalttext [options] [folder] [options]\n";
+  
   std::cout << "-h, --help: this help\n";
   std::cout << "-l, --licence: print the licence\n";
   std::cout << "-v, --version: prints the version\n";

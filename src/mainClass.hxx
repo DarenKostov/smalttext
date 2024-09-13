@@ -16,12 +16,25 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <filesystem>
+#include <unordered_map>
+#include <vector>
+#include "documents-and-texts/document.hxx"
 
 class MainClass{
 
   private:
     //variables:
 
+    //for displaying;
+    std::vector<sf::Text> currenltyDisplayed;
+    Document* currentDocument;
+
+    std::unordered_map<std::string, Document> documents;
+
+    std::filesystem::path workingPath;
+    
 
     //sfml stuff
     sf::RenderWindow window;
@@ -33,7 +46,7 @@ class MainClass{
   public:
 
     //constructor, like a atSTartUp function
-    MainClass();
+    MainClass(const std::filesystem::path&);
 
     //deconstror
     ~MainClass();
@@ -53,4 +66,10 @@ class MainClass{
     //this draws he program, like update but for drawing
     void draw();
 
+
+    //TODO return error state
+    //loads a file into the library
+    void loadFile(const std::filesystem::path&);
+
+   
 };

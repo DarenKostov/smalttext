@@ -21,13 +21,14 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <stdlib.h>
 
 
-MainClass::MainClass(){
+MainClass::MainClass(const std::filesystem::path& projectPath){
   window.create(sf::VideoMode(123, 123), "WXYZ");
   mainView=sf::View(sf::FloatRect(0, 0, 123, 123));
   mainView.setViewport(sf::FloatRect(0, 0, 1, 1));
   window.setView(mainView);
   window.setVerticalSyncEnabled(true);
 
+  workingPath=projectPath;
 
   
 }
@@ -37,6 +38,10 @@ MainClass::~MainClass(){
 
 
 void MainClass::startProgram(){
+
+
+  //load all documents magic here
+
 
   clock.restart();
 
@@ -55,4 +60,20 @@ void MainClass::startProgram(){
 
 }
 
+
+
+void MainClass::loadFile(const std::filesystem::path&){
+
+  //open file and parse it
+
+  //get version
+
+  //meta parse
+
+  //parse
+
+  //add document
+
+
+}
 
