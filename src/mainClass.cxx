@@ -117,7 +117,7 @@ void MainClass::loadProject(){
   }
 
   for (auto& [path, document] : documents) {
-    // document->resetLinks(documents);
+    document->resetLinks(documents);
   }
 
   for (auto& [path, document] : documents) {
@@ -259,17 +259,21 @@ void MainClass::makeSuitableForAFileName(std::string& in){
 void MainClass::printLinks(){
   
   for(const auto&  [path, document] : documents){
-    std::cout << document->getTitle() << ":\n";
+    std::cout << document->getTitle() << ":\n" << std::flush;
 
-    std::cout << "\tMentions:\n";
+    std::cout << "\tMentions:\n" << std::flush;
     for(auto forward : document->getForwardLinks()){
-      std::cout << "\t\t" << forward->getTitle() << "\n";
+      std::cout << "\t\t" << forward->getTitle() << "\n" << std::flush;
     }
 
-    std::cout << "\tMentioned by:\n";
+    std::cout << "\tMentioned by:\n" << std::flush;
     for(auto forward : document->getBackwardLinks()){
-      std::cout << "\t\t" << forward->getTitle() << "\n";
+      std::cout << "\t\t" << forward->getTitle() << "\n" << std::flush;
     }
+
+    // std::cout << "\tContents{\n" << std::flush;
+    // std::cout << document->getContents() << "\n}\n" << std::flush;
+    
   }
 }
 

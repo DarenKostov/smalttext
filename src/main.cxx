@@ -113,6 +113,9 @@ int main(int argc, char **argv){
 
 
 void printHelp(){
+
+  std::cout << "-o, --open <project folder>: opens a project\n";
+  std::cout << "if -o or --open are not used the current folder will be treated as the project folder";
   std::cout << "-h, --help: this help\n";
   std::cout << "-l, --licence: print the licence\n";
   std::cout << "-v, --version: prints the version\n";
