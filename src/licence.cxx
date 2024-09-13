@@ -3,10 +3,10 @@
   possibly the worst way to store and print the licence
 
   steps to replicate this given you have a GPLv3 licence file:
-  sed -i 's/"/\\"/g' licence.txt
-  sed -i 's/$/\\n";/' licence.txt
-  sed -i 's/^/std::cout << "/' licence.txt
-  (add the resulting file into a function or something, in this case I added it into printLicence)
+  sed -i 's/"/\\"/g' licence.cpp
+  sed -i 's/$/\\n";/' licence.cpp
+  sed -i 's/^/std::cout << "/' licence.cpp
+  (add the resulting file into a function or something, in this case I added into printLicence)
 
 */
 

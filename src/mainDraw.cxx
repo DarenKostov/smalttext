@@ -16,33 +16,20 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "mainClass.hxx"
-#include <iostream>
+
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 void MainClass::draw(){
 
-  std::cout << "Draw!!\n";
-
-  //TODO perhaps make a tab menu on the top with all the documents loaded?
-
-  
-  //clear wondow and make sure we are drawing where we need to be drawing
   window.clear();
   window.setView(mainView);
   
-  //set a background
-  sf::RectangleShape background;
-  background.setFillColor(sf::Color(0, 0, 0));
-  background.setPosition(0, 0);
-  background.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
-  window.draw(background);
-
-
-  if(documentOnScreen!=nullptr){
-    //draw all document texts of the current document
-    for(const auto& text : documentTexts[documentOnScreen]){
-      window.draw(text);
-    }
-  }
+  sf::RectangleShape rect(sf::Vector2f(30, 30));
+  rect.setFillColor(sf::Color(255, 255, 255, 255));
+  rect.setPosition(window.mapPixelToCoords(sf::Mouse::getPosition(window), mainView));
+  window.draw(rect);
 
   window.display();
   

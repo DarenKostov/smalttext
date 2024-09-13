@@ -16,10 +16,7 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "mainClass.hxx"
-#include <iostream>
 
 
 void MainClass::update(){
-  std::cout << "Update!!\n";
-
 }

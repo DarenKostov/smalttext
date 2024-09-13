@@ -15,12 +15,10 @@ You should have received a copy of the GNU General Public License along with sma
 If not, see <https://www.gnu.org/licenses/>.
 */
 
-
 #include "mainClass.hxx"
 
 #include <iostream>
 #include <csignal>
-#include <filesystem>
 
 //prints the licence
 void printLicence();
@@ -69,11 +67,9 @@ void signal_handler(int signal_num){
 
 int main(int argc, char **argv){
 
-  //if no folder is selected, select the current directory
-  std::string projectPath{"./"};
-  
+
   //check all flags
-  for(int i=1; i<argc; i++){
+  for(int i=0; i<argc; i++){
     std::string thisArg=std::string(argv[i]);
     if(thisArg=="-l" || thisArg=="--licence"){
       printLicence();
@@ -84,8 +80,6 @@ int main(int argc, char **argv){
     }else if(thisArg=="-v" || thisArg=="--version"){
       printVersion();
       return 0;
-    }else{
-      projectPath=thisArg;
     }
   }
 
@@ -94,14 +88,8 @@ int main(int argc, char **argv){
 
   signal(SIGINT, signal_handler);
 
-  if(projectPath[0]!='/'){
-    // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90050
-    projectPath=std::filesystem::current_path().generic_string()+'/'+projectPath;
 
-  }
-
-
-  MainClass* mainInstance=new MainClass(projectPath);
+  MainClass* mainInstance=new MainClass();
   atExitFree(mainInstance);
 
   mainInstance->startProgram();
@@ -113,9 +101,6 @@ int main(int argc, char **argv){
 
 
 void printHelp(){
-
-  std::cout << "-o, --open <project folder>: opens a project\n";
-  std::cout << "if -o or --open are not used the current folder will be treated as the project folder";
   std::cout << "-h, --help: this help\n";
   std::cout << "-l, --licence: print the licence\n";
   std::cout << "-v, --version: prints the version\n";
