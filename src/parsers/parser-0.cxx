@@ -16,6 +16,7 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "parsers.hxx"
+#include <iostream>
 
 
 void parser0(const std::string& input, Document& theDocument){
@@ -28,28 +29,38 @@ void parser0(const std::string& input, Document& theDocument){
 
   bool finishedWithCurrentTextBlock{true};
   
-  /*
-    perhaps use find with starting position
-    https://en.cppreference.com/w/cpp/string/basic_string/find
-  */
   
-  for(size_t startSegment{0}, index{0}; index<input.size(); index++){
+  size_t segmentStart{0};
+  size_t segmentEnd{0};
+  
+  for(;;){
     
-    switch(input[index]){
+    auto potentialSegmentEnd=input.find_first_of("\n*_~[\0", segmentStart);
+    if(potentialSegmentEnd==std::string::npos){
+      std::cerr << "how did we even get here?\n";
+      return;
+    }
+    
+    switch(input[potentialSegmentEnd]){
       case '\n':
-    
+        consecutiveNewlines++;
+        if(consecutiveNewlines>1){
+          finishedWithCurrentTextBlock=true;
+        }
+        
       break;        
 
       default:
       //do absolutly nothing for now
-      if(finishedWithCurrentTextBlock){
-        finishedWithCurrentTextBlock=false;
-        output.back().contents=input.substr(startSegment, index-startSegment);
-        output.push_back(TextBlock());
-      }
-    
+      break;
     }
     
+
+    if(finishedWithCurrentTextBlock){
+      finishedWithCurrentTextBlock=false;
+      output.back().contents=input.substr(startSegment, index-startSegment);
+      output.push_back(TextBlock());
+    }
   }
 
   current.contents=input;
