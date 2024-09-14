@@ -38,8 +38,11 @@ MainClass::MainClass(const std::filesystem::path& projectPath){
   
   loadFile(workingPath);
 
+  // return;
+
   for(auto& [title, document]: documents){
     currentDocument=&document;
+    // std::cout << document.title;
     break;
   }
 
@@ -51,6 +54,7 @@ MainClass::~MainClass(){
 
 void MainClass::startProgram(){
 
+  return;
 
 
     std::cout << "New document:\n";

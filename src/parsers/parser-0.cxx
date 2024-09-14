@@ -23,50 +23,119 @@ void parser0(const std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
 
 
-  TextBlock current;
+  // TextBlock current;
+  // current.contents=input;
+  // //TODO make sure you dont copy strings twice
+  // output.push_back(current);
 
-  int consecutiveNewlines{0};
+  // return;
+ 
+  std::vector<std::pair<size_t, char>> segmentStops;
+  std::string segmentIndicators{""};
+  
 
-  bool finishedWithCurrentTextBlock{true};
-  
-  
-  size_t segmentStart{0};
-  size_t segmentEnd{0};
-  
-  for(;;){
+  bool newLine{false};
+  bool bold{false};
+  bool italic{false};
+  bool crossed{false};
+  bool underlined{false};
+  bool segmentChange{true};
+
+
+  for(size_t previousIndex{0};;){
     
-    auto potentialSegmentEnd=input.find_first_of("\n*_~[\0", segmentStart);
-    if(potentialSegmentEnd==std::string::npos){
+    auto currentIndex=input.find_first_of("\n*_~[^\0", previousIndex);
+    if(currentIndex==std::string::npos){
       std::cerr << "how did we even get here?\n";
       return;
     }
-    
-    switch(input[potentialSegmentEnd]){
-      case '\n':
-        consecutiveNewlines++;
-        if(consecutiveNewlines>1){
-          finishedWithCurrentTextBlock=true;
-        }
-        
-      break;        
 
-      default:
-      //do absolutly nothing for now
+    //current char
+    const char& current{input[currentIndex]};
+    //we reached the end
+    if(input[previousIndex]=='\0'){
       break;
     }
+
+    //very next char
+    const char& next={input[currentIndex+1]};
+    //next is safe becase it is at least \0
+
+
+    switch(current){
+      case '\n':
+        if(next=='\n'){
+          segmentChange=true;
+          newLine=true;
+        }
+        break;
+      case '*':
+        if(next=='*'){
+        
+        }
+        break;
+      case '~':
+        if(next=='~'){
+        
+        }
+        break;
+      case '_':
+        if(next=='_'){
+        
+        }
+        break;
+      case '^':
+        if(next=='^'){
+        
+        }
+        break;
+      case '[':
+        break;
+      case '{':
+        break;
+
+      default:
+        std::cerr << "how did we even get here??\n";
+        return;
+        break;
+    }
+
+    if(segmentChange){
+      output.push_back(TextBlock());
+      if(newLine){
+        output.back().lineBreakLevel=1;
+      }
+    
+    
+    }else{
+      // if(newLine){
+        output.back().contents+=input.substr(previousIndex, currentIndex-previousIndex);
+        newLine=false;      
+      // }
+    
+    }
+
+
     
 
-    if(finishedWithCurrentTextBlock){
-      finishedWithCurrentTextBlock=false;
-      output.back().contents=input.substr(startSegment, index-startSegment);
-      output.push_back(TextBlock());
-    }
+    segmentStops.push_back({currentIndex, input[currentIndex]});
+    previousIndex=currentIndex;
   }
 
-  current.contents=input;
 
-  //TODO make sure you dont copy strings twice
-  output.push_back(current);
+  
 
+
+
+
+
+
+
+
+
+
+
+
+  
 
 }
