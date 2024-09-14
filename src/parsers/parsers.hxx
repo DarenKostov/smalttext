@@ -20,5 +20,5 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <string>
 #include "../documents-and-texts/document.hxx"
 
-void parser0(const std::string&, Document&);
+void parser0(std::string&, Document&);
 

@@ -19,7 +19,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <iostream>
 
 
-void parser0(const std::string& input, Document& theDocument){
+void parser0(std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
 
 
@@ -39,34 +39,46 @@ void parser0(const std::string& input, Document& theDocument){
   bool italic{false};
   bool crossed{false};
   bool underlined{false};
+  bool readyForSegmentChange{true};
   bool segmentChange{true};
 
+  bool reachedTheEnd{false};
 
-  for(size_t previousIndex{0};;){
+  //current char
+  char current{'\0'};
+  //very next char
+  char next={'\0'};
+  for(size_t start{0}, current{0}, end{0};; current++){
     
-    auto currentIndex=input.find_first_of("\n*_~[^\0", previousIndex);
-    if(currentIndex==std::string::npos){
-      std::cerr << "how did we even get here?\n";
-      return;
+
+
+    //we reached the end
+    if(end+1==input.size()){
+      reachedTheEnd=true;
+    }else{
+      current=input[end];
+      next=input[end+1];
     }
 
-    //current char
-    const char& current{input[currentIndex]};
-    //we reached the end
-    if(input[previousIndex]=='\0'){
+
+
+    if(reachedTheEnd){
+      //apply font stuff
+      output.push_back(TextBlock());
+      output.back().contents=input.substr(start, end-start);
       break;
     }
 
-    //very next char
-    const char& next={input[currentIndex+1]};
-    //next is safe becase it is at least \0
-
-
+    
     switch(current){
       case '\n':
         if(next=='\n'){
-          segmentChange=true;
+          readyForSegmentChange=true;
           newLine=true;
+        }else{
+          //single newline, ignore it, make it a space
+          //maybe not best practice
+          current=' ';
         }
         break;
       case '*':
@@ -95,31 +107,40 @@ void parser0(const std::string& input, Document& theDocument){
         break;
 
       default:
-        std::cerr << "how did we even get here??\n";
-        return;
+
+        if(readyForSegmentChange){
+          readyForSegmentChange=false;
+          segmentChange=true;
+        }
+        end++;
+
         break;
     }
 
     if(segmentChange){
+
+      
+      //set the contents of the
+      output.back().contents=input.substr(start, end-start);
+
+
+      
       output.push_back(TextBlock());
+
       if(newLine){
         output.back().lineBreakLevel=1;
       }
-    
-    
+
+      start=end;
     }else{
-      // if(newLine){
-        output.back().contents+=input.substr(previousIndex, currentIndex-previousIndex);
-        newLine=false;      
-      // }
+      output.back().contents=input.substr(start, end-start);
+    
     
     }
 
 
     
 
-    segmentStops.push_back({currentIndex, input[currentIndex]});
-    previousIndex=currentIndex;
   }
 
 
