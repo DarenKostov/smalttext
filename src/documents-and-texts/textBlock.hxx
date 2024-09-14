@@ -42,19 +42,21 @@ struct TextBlock{
     */
     enum LinkType{internal, website};
 
-    std::string contents;
+    std::string contents{""};
     
     //r+g+b+a (should include (a)lpha?)
-    uint32_t color;
+    uint32_t color{0x000000};
     
-    bool isLink;
-    LinkType linktype;
-    std::string link;
+    bool isLink{false};
+    LinkType linktype{internal};
+    std::string link{""};
+    
+    int lineBreakLevel{0};
     
     //TBD
     //differnt iszes should be on different lines?
     //keep them on the same line?
-    int size;
+    int size{16};
 
 };
 

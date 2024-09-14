@@ -17,11 +17,41 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #include "parsers.hxx"
 
+
 void parser0(const std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
 
 
   TextBlock current;
+
+  int consecutiveNewlines{0};
+
+  bool finishedWithCurrentTextBlock{true};
+  
+  /*
+    perhaps use find with starting position
+    https://en.cppreference.com/w/cpp/string/basic_string/find
+  */
+  
+  for(size_t startSegment{0}, index{0}; index<input.size(); index++){
+    
+    switch(input[index]){
+      case '\n':
+    
+      break;        
+
+      default:
+      //do absolutly nothing for now
+      if(finishedWithCurrentTextBlock){
+        finishedWithCurrentTextBlock=false;
+        output.back().contents=input.substr(startSegment, index-startSegment);
+        output.push_back(TextBlock());
+      }
+    
+    }
+    
+  }
+
   current.contents=input;
 
   //TODO make sure you dont copy strings twice
