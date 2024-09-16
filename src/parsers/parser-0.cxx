@@ -16,8 +16,11 @@ If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "parsers.hxx"
+#include <cstring>
 #include <iostream>
 
+//checks if the char is any of the given chars
+bool isAnyOf(const char&, const char*);
 
 void parser0(std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
@@ -34,11 +37,22 @@ void parser0(std::string& input, Document& theDocument){
   std::string segmentIndicators{""};
   
 
+  bool justGotAsterisk{false};
+  bool justGotUnderscore{false};
+  bool justGotTilde{false};
+  bool justGotCaret{false};
+  // bool justGot{false};
+  // bool justGot{false};
+  
   bool newLine{false};
   bool bold{false};
-  bool italic{false};
-  bool crossed{false};
   bool underlined{false};
+
+  bool italic{false};
+  bool emphatic{false};
+
+  bool crossed{false};
+
   bool readyForSegmentChange{true};
   bool segmentChange{true};
 
@@ -48,115 +62,87 @@ void parser0(std::string& input, Document& theDocument){
   char current{'\0'};
   //very next char
   char next={'\0'};
-  for(size_t start{0}, current{0}, end{0};; current++){
-    
+  for(size_t index{0};;index++){
 
+    if(isAnyOf(input[index], "\n*~_^")){
+    
+    } 
+    
+    // index=input.find_first_of("\n*~_^", index);
+
+    char& char1=input[index];
+    char char2=input[index+1];
+
+    //different different, we care only for the 1st one
+    if(char1!=char2){
+      switch(char1){
+        case '\n':
+          //make it a space
+          break;
+        case '*':
+          //bold
+          break;
+        case '^':
+          //superscript
+          break;
+        case '_':
+          //italic
+          break;
+        case '~':
+          //substript
+          break;
+      }
+    
+    //same values, we still care only for the 1st one :/
+    }else{
+      index++;
+      switch(char1){
+        case '\n':
+          //new paragraph
+          break;
+        case '*':
+          //emphasized
+          break;
+        case '^':
+          //ignore
+          break;
+        case '_':
+          //underline
+          break;
+        case '~':
+          //crossed
+          break;
+      }
+    
+    }
+
+    //rest of the string is clean
+    if(index==std::string::npos){
+      //WARNING EDGE CASE
+      index=input.size()-1;
+    }
 
     //we reached the end
-    if(end+1==input.size()){
-      reachedTheEnd=true;
-    }else{
-      current=input[end];
-      next=input[end+1];
-    }
-
-
-
-    if(reachedTheEnd){
-      //apply font stuff
-      output.push_back(TextBlock());
-      output.back().contents=input.substr(start, end-start);
-      break;
-    }
-
-    
-    switch(current){
-      case '\n':
-        if(next=='\n'){
-          readyForSegmentChange=true;
-          newLine=true;
-        }else{
-          //single newline, ignore it, make it a space
-          //maybe not best practice
-          current=' ';
-        }
-        break;
-      case '*':
-        if(next=='*'){
-        
-        }
-        break;
-      case '~':
-        if(next=='~'){
-        
-        }
-        break;
-      case '_':
-        if(next=='_'){
-        
-        }
-        break;
-      case '^':
-        if(next=='^'){
-        
-        }
-        break;
-      case '[':
-        break;
-      case '{':
-        break;
-
-      default:
-
-        if(readyForSegmentChange){
-          readyForSegmentChange=false;
-          segmentChange=true;
-        }
-        end++;
-
-        break;
-    }
-
-    if(segmentChange){
-
-      
-      //set the contents of the
-      output.back().contents=input.substr(start, end-start);
-
-
-      
-      output.push_back(TextBlock());
-
-      if(newLine){
-        output.back().lineBreakLevel=1;
-      }
-
-      start=end;
-    }else{
-      output.back().contents=input.substr(start, end-start);
-    
+    if(index==input.size()-1){
+      //WARNING EDGE CASE
     
     }
+}
 
 
-    
 
+
+  
+
+}
+
+
+
+bool isAnyOf(const char& single, const char* many){
+  for(int i{0}; many[i]!='\0'; i++){
+    if(many[i]==single){
+      return true;  
+    }
   }
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
+  return false;
 }
