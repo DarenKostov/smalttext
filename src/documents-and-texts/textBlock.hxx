@@ -53,6 +53,10 @@ struct TextBlock{
     
     int lineBreakLevel{0};
     
+    bool isBold{false};
+    
+    bool isEmphatic{false};
+    
     //TBD
     //differnt iszes should be on different lines?
     //keep them on the same line?

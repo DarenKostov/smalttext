@@ -26,21 +26,17 @@ bool isAnyOf(const char&, const char*);
 std::pair<std::string, size_t> getClosest(std::unordered_map<std::string, size_t>);
 
 
-enum Indicator{newLine, doubleNewLine};
+enum Indicator{newLine, doubleNewLine, asterisk, doubleAsterisk};
 
 void parser0(std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
 
   std::vector<std::pair<Indicator, size_t>> foundIndicators;
 
-  std::unordered_map<Indicator, size_t> nextIndicators={
-    {newLine, 0},
-    {doubleNewLine, 0},
-  };
+  std::unordered_map<Indicator, size_t> nextIndicators;
 
   std::vector<Indicator> indicatorsToCheck={
-  newLine, doubleNewLine
-  
+  newLine, doubleNewLine, asterisk, doubleAsterisk
   };
   
   //get all the initial values
@@ -60,6 +56,12 @@ void parser0(std::string& input, Document& theDocument){
         case doubleNewLine:
           nextIndicators[indicator]=input.find("\n\n", index);
           break;
+        case asterisk:
+          nextIndicators[indicator]=input.find('*', index);
+          break;
+        case doubleAsterisk:
+          nextIndicators[indicator]=input.find("**", index);
+          break;
         default:
           std::cerr << "how did we even get here?\n";
           break;
@@ -67,30 +69,71 @@ void parser0(std::string& input, Document& theDocument){
     }
     indicatorsToCheck.clear();
 
-    //== ALL BELOW: if newlines are the closest
-    indicatorsToCheck.push_back(newLine);
-    indicatorsToCheck.push_back(doubleNewLine);
+    //this will get messy fast :/
+
+    Indicator closest;
     
+    if(nextIndicators[newLine]<nextIndicators[asterisk]){
+      closest=newLine;
+    }else{
+      closest=asterisk;
+    }
+
     //if the closest doesnt exist ==> no idicators exits ==> we are at the end
-    if(nextIndicators[newLine]==std::string::npos){
+    if(nextIndicators[closest]==std::string::npos){
       break;
     }
 
-    //prioritize double newLines
-    if(nextIndicators[doubleNewLine]==nextIndicators[newLine]){
-      foundIndicators.push_back({doubleNewLine, nextIndicators[doubleNewLine]});
-      index=nextIndicators[doubleNewLine]+2; //double newline is 2 characters
-    }else{
-      foundIndicators.push_back({newLine, nextIndicators[newLine]});
-      index=nextIndicators[newLine]+1; //newline is 1 character
-    }
+    switch(closest){
+      case newLine:{
+        indicatorsToCheck.push_back(newLine);
+        indicatorsToCheck.push_back(doubleNewLine);
     
+
+        //prioritize double newLines
+        if(nextIndicators[doubleNewLine]==nextIndicators[newLine]){
+          foundIndicators.push_back({doubleNewLine, nextIndicators[doubleNewLine]});
+          index=nextIndicators[doubleNewLine]+2; //double newline is 2 characters
+        }else{
+          foundIndicators.push_back({newLine, nextIndicators[newLine]});
+          index=nextIndicators[newLine]+1; //newline is 1 character
+        }
+      }
+      break;
+
+      case asterisk:{
+        indicatorsToCheck.push_back(asterisk);
+        indicatorsToCheck.push_back(doubleAsterisk);
+    
+        //prioritize double asterisks
+        if(nextIndicators[doubleAsterisk]==nextIndicators[asterisk]){
+          foundIndicators.push_back({doubleAsterisk, nextIndicators[doubleAsterisk]});
+          index=nextIndicators[doubleAsterisk]+2; //double asterisk is 2 characters
+        }else{
+          foundIndicators.push_back({asterisk, nextIndicators[asterisk]});
+          index=nextIndicators[asterisk]+1; //asterisk is 1 character
+        }
+      }
+      break;
+
+    default:
+      std::cerr << "how did we even get here??\n";
+      break;
+      
+    }
   }
+
+  // for(auto& [indicator, position] : foundIndicators){
+  //       std::cout << indicator << " == " << position << "\n";
+    
+  // }
+  // return;
 
   size_t prevIndex{0};
   TextBlock flags;
   output.push_back(flags);
   for(auto& [indicator, position] : foundIndicators){
+      // std::cout << indicator << " == " << position << "\n" << std::flush;
 
     switch(indicator){
       //ignore and treat as a space
@@ -100,16 +143,38 @@ void parser0(std::string& input, Document& theDocument){
 
       //start a new paragraph, is 2 chars
       case doubleNewLine:
-        std::cout << indicator << " == " << position << "\n";
+        std::cout << "\\n == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
         output.push_back(flags);
         output.back().lineBreakLevel=1;
         prevIndex=position+2;
         break;
+
+      //make it bold, is 1 char
+      case asterisk:
+        std::cout << "* == " << position << "\n";
+        output.back().contents=input.substr(prevIndex, position-prevIndex);
+        flags.isBold=!flags.isBold;
+        output.push_back(flags);
+        prevIndex=position+1;
+        break;
+
+      //make it emphatic, is 2 chars
+      case doubleAsterisk:
+        std::cout << "** == " << position << "\n";
+        output.back().contents=input.substr(prevIndex, position-prevIndex);
+        flags.isEmphatic=!flags.isEmphatic;
+        output.push_back(flags);
+        prevIndex=position+2;
+        break;
     }
   }
-  //dont forget the last one, there is no indicator for it
-  output.back().contents=input.substr(prevIndex);
+  //dont forget the last one, there is no indicator for it... unless there actually is an indicator
+  if(prevIndex!=input.size()-1){
+    output.back().contents=input.substr(prevIndex);
+  }else{
+    output.pop_back();
+  }
 
 }
 
