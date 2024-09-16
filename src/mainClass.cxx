@@ -21,10 +21,12 @@ If not, see <https://www.gnu.org/licenses/>.
 #include "parsers/parsers.hxx"
 #include <charconv>
 #include <iostream>
+#include <regex>
 #include <unistd.h>
 #include <stdlib.h>
 #include <fstream>
 
+std::tuple<bool, int, int, int> parseVersion(std::string);
 
 MainClass::MainClass(const std::filesystem::path& projectPath){
   // window.create(sf::VideoMode(123, 123), "WXYZ");
@@ -34,12 +36,13 @@ MainClass::MainClass(const std::filesystem::path& projectPath){
   // window.setVerticalSyncEnabled(true);
 
   workingPath=projectPath;
-
+  currentDocument=nullptr;
   
   loadFile(workingPath);
 
   // return;
 
+  
   for(auto& [title, document]: documents){
     currentDocument=&document;
     // std::cout << document.title;
@@ -54,21 +57,22 @@ MainClass::~MainClass(){
 
 void MainClass::startProgram(){
 
-  // return;
+  if(currentDocument==nullptr){
+    return;
+  }
+
+  std::cout << "New document:\n";
+  std::cout << "Title:" << currentDocument->title << "\n";
+  std::cout << "Contents:\n";
+
+  for(const auto& content : currentDocument->contents){
+    std::cout << "\tContent:\n";
+    std::cout << content.contents;
+    std::cout << "\n\tEnd\n";
+  }
 
 
-    std::cout << "New document:\n";
-    std::cout << "Title:" << currentDocument->title << "\n";
-    std::cout << "Contents:\n";
-
-    for(const auto& content : currentDocument->contents){
-      std::cout << "\tContent:\n";
-      std::cout << content.contents;
-      std::cout << "\n\tEnd\n";
-    }
-
-
-  //load all documents magic here
+  //"load all documents" magic here
 
 
 
@@ -96,6 +100,7 @@ void MainClass::startProgram(){
 void MainClass::loadFile(const std::filesystem::path& path){
 
   std::string contentsRaw{""};
+  bool success{true};
 
   //dont worry, performance hit of copying later should be minimal as we are not copying the contents
   Document newDocument;
@@ -103,19 +108,40 @@ void MainClass::loadFile(const std::filesystem::path& path){
   std::ifstream fileIn;
   fileIn.open(path);
   
+
+  
   //TODO Parse Version
   int metaParserVersion{0};
   int parserVersion{0};
+  int dontCare{0};
+  
+
   std::string versionRaw{""};
   std::getline(fileIn, versionRaw, '\n');
-
-  bool success;
   
+  std::tie(success, metaParserVersion, parserVersion, dontCare)=parseVersion(versionRaw);
+  
+
+  //no success, no file
+  if(!success){
+    fileIn.close();
+    if(metaParserVersion==0){
+      std::cerr << "are you sure this is a smalttext file?\n";
+    }else{
+      std::cerr << "version format is wrong\n";
+    }
+    return;
+  }
+
   //should I use array with function pointers?
   switch(metaParserVersion){
     case 0:
       success=metaParser0(fileIn, newDocument);
       break;
+    default:
+      std::cerr << "unavaliable meta parser version\n";
+      return;
+    
   }
   
   //no success, no file
@@ -134,10 +160,44 @@ void MainClass::loadFile(const std::filesystem::path& path){
   //should I use array with function pointers?
   switch(parserVersion){
     case 0:
-    parser0(contentsRaw, documents[newDocument.title]);
-    break;
+      parser0(contentsRaw, documents[newDocument.title]);
+      break;
+    default:
+      std::cerr << "unavaliable parser version\n";
+      return;
   }
 
 
 }
 
+std::tuple<bool, int, int, int> parseVersion(std::string in){
+
+  std::regex pattern(R"(<SMALTTEXT:([0-9]+)\.([0-9]+)\.([0-9]+)>)");
+  std::smatch match;
+
+
+  if(std::regex_search(in, match, pattern)){
+
+    if(match.size()!=4){
+      return {false, 1, 0, 0};
+    }
+    
+    int metaParser{0};
+    int parser{0};
+    int iteration{0};
+
+    try{
+      metaParser=std::stoi(match.str(1));
+      parser=std::stoi(match.str(2));
+      iteration=std::stoi(match.str(3));
+    }catch(std::exception &err){
+      return {false, 1, 0, 0};
+    }
+
+  return {true, metaParser, parser, iteration};
+
+  }
+
+  return {false, 0, 0, 0};
+
+}

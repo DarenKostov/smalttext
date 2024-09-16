@@ -34,11 +34,6 @@ void parser0(std::string& input, Document& theDocument){
   newLine, doubleNewLine, asterisk, doubleAsterisk, underScore, doubleUnderScore, caret, tilde, doubleTilde
   };
   
-  // //get all the initial values
-  // for(auto& [indicator, pos]: nextIndicators){
-  //   pos=input.find(indicator);
-  // }
-
 
   for(size_t index{0};;){
 
@@ -178,7 +173,7 @@ void parser0(std::string& input, Document& theDocument){
   }
 
   // for(auto& [indicator, position] : foundIndicators){
-  //       std::cout << indicator << " == " << position << "\n";
+  //    std::cout << indicator << " == " << position << "\n";
     
   // }
   // return;
