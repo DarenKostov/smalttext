@@ -26,108 +26,120 @@ void parser0(std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
 
 
-  // TextBlock current;
-  // current.contents=input;
+  // TextBlock current1;
+  // current1.contents=input;
   // //TODO make sure you dont copy strings twice
-  // output.push_back(current);
+  // output.push_back(current1);
 
   // return;
  
-  std::vector<std::pair<size_t, char>> segmentStops;
-  std::string segmentIndicators{""};
+
+  int asterisksSoFar{false};
+  int underscoresSoFar{false};
+  int tildesSoFar{false};
+  int caretsSoFar{false};
+  int newLinesSoFar{false};
   
-
-  bool justGotAsterisk{false};
-  bool justGotUnderscore{false};
-  bool justGotTilde{false};
-  bool justGotCaret{false};
-  // bool justGot{false};
-  // bool justGot{false};
-  
-  bool newLine{false};
-  bool bold{false};
-  bool underlined{false};
-
-  bool italic{false};
-  bool emphatic{false};
-
-  bool crossed{false};
-
-  bool readyForSegmentChange{true};
-  bool segmentChange{true};
+  //bold, italic, etc.-- lets call them flags
+  bool gettingNewFlags{false};
+  bool segmentChange{false};
 
   bool reachedTheEnd{false};
 
+  TextBlock currentFlags;
+  output.push_back(currentFlags);
+  
   //current char
   char current{'\0'};
-  //very next char
-  char next={'\0'};
-  for(size_t index{0};;index++){
+  for(size_t prevIndex{0}, index{0};;index++){
 
-    if(isAnyOf(input[index], "\n*~_^")){
+    char& current{input[index]};
+
+
+    //asume we are getting a new segment
+    std::cout << current<<"=" << std::flush;
+    // break;
+
+    switch(current){
+      case '\n':
+        gettingNewFlags=true;
+        newLinesSoFar++;
+        break;
+      case '*':
+        gettingNewFlags=true;
+        asterisksSoFar++;
+        break;
+      case '^':
+        gettingNewFlags=true;
+        caretsSoFar++;
+        break;
+      case '_':
+        gettingNewFlags=true;
+        underscoresSoFar++;
+        break;
+      case '~':
+        gettingNewFlags=true;
+        tildesSoFar++;
+        break;
+
+      case '\0':
+        reachedTheEnd=true;
+        break;
+
+      default:
+
+        //getting normal characters? no longer getting flags
+        if(gettingNewFlags){
+          segmentChange=true; 
+          gettingNewFlags=false;
+        }
+
+      
+    }
+
     
-    } 
-    
-    // index=input.find_first_of("\n*~_^", index);
+    //if we are getting new flags, we are already onto another segment
+    if(segmentChange){
 
-    char& char1=input[index];
-    char char2=input[index+1];
+      segmentChange=false;
 
-    //different different, we care only for the 1st one
-    if(char1!=char2){
-      switch(char1){
-        case '\n':
-          //make it a space
-          break;
-        case '*':
-          //bold
-          break;
-        case '^':
-          //superscript
-          break;
-        case '_':
-          //italic
-          break;
-        case '~':
-          //substript
-          break;
+      //==CHECK ALL FLAGS AND SET THEM APPROPRIATLY
+
+      if(asterisksSoFar+caretsSoFar+underscoresSoFar+tildesSoFar==0){
+        if(newLinesSoFar==1){
+          //only 1 newline? ignore it
+          input[index-1]=' ';
+          currentFlags.lineBreakLevel=0;
+          newLinesSoFar=0;
+
+          //continue, no new segments
+          continue;
+      
+        //more than 1? new paragraph segment (more than 1 is implied by segmentChange==true and no onether characters being found)
+        }else{
+          currentFlags.lineBreakLevel=1;
+          newLinesSoFar=0;
+      
+        }
       }
-    
-    //same values, we still care only for the 1st one :/
-    }else{
-      index++;
-      switch(char1){
-        case '\n':
-          //new paragraph
-          break;
-        case '*':
-          //emphasized
-          break;
-        case '^':
-          //ignore
-          break;
-        case '_':
-          //underline
-          break;
-        case '~':
-          //crossed
-          break;
-      }
-    
+
+      output.back().contents=input.substr(prevIndex, index-prevIndex);
+      prevIndex=index;
+      output.push_back(currentFlags);
+
+    }      
+
+    if(reachedTheEnd){
+      output.back().contents=input.substr(prevIndex, index-prevIndex);
+      return;
     }
 
-    //rest of the string is clean
-    if(index==std::string::npos){
-      //WARNING EDGE CASE
-      index=input.size()-1;
-    }
 
-    //we reached the end
-    if(index==input.size()-1){
-      //WARNING EDGE CASE
-    
-    }
-}
+
+
+
+
+  }
 
 
 

@@ -54,7 +54,7 @@ MainClass::~MainClass(){
 
 void MainClass::startProgram(){
 
-  return;
+  // return;
 
 
     std::cout << "New document:\n";
