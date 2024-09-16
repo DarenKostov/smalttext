@@ -29,6 +29,7 @@ std::pair<std::string, size_t> getClosest(std::unordered_map<std::string, size_t
 enum Indicator{newLine, doubleNewLine};
 
 void parser0(std::string& input, Document& theDocument){
+  auto& output=theDocument.contents;
 
   std::vector<std::pair<Indicator, size_t>> foundIndicators;
 
@@ -47,9 +48,8 @@ void parser0(std::string& input, Document& theDocument){
     pos=input.find(indicator);
   }
 
-  size_t index{0};
 
-  for(;;){
+  for(size_t index{0};;){
 
     //update indicators that need to be updated
     for(auto& indicator : indicatorsToCheck){
@@ -87,10 +87,29 @@ void parser0(std::string& input, Document& theDocument){
     
   }
 
-  for(auto& indicator : foundIndicators){
-    std::cout << indicator.first << " == " << indicator.second << "\n";
-  }
+  size_t prevIndex{0};
+  TextBlock flags;
+  output.push_back(flags);
+  for(auto& [indicator, position] : foundIndicators){
 
+    switch(indicator){
+      //ignore and treat as a space
+      case newLine:
+        input[position]=' ';
+        break;
+
+      //start a new paragraph, is 2 chars
+      case doubleNewLine:
+        std::cout << indicator << " == " << position << "\n";
+        output.back().contents=input.substr(prevIndex, position-prevIndex);
+        output.push_back(flags);
+        output.back().lineBreakLevel=1;
+        prevIndex=position+2;
+        break;
+    }
+  }
+  //dont forget the last one, there is no indicator for it
+  output.back().contents=input.substr(prevIndex);
 
 }
 
