@@ -63,8 +63,8 @@ void MainClass::startProgram(){
 
     for(const auto& content : currentDocument->contents){
       std::cout << "\tContent:\n";
-      std::cout << content.contents << "\n";
-      std::cout << "\tEnd\n";
+      std::cout << content.contents;
+      std::cout << "\n\tEnd\n";
     }
 
 

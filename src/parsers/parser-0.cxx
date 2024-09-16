@@ -42,6 +42,10 @@ void parser0(std::string& input, Document& theDocument){
   
   //bold, italic, etc.-- lets call them flags
   bool gettingNewFlags{false};
+
+  //if gettingNewFlags is false, disregard the value of this
+  bool firstTimeGettingNewFlags{true};
+
   bool segmentChange{false};
 
   bool reachedTheEnd{false};
@@ -51,14 +55,14 @@ void parser0(std::string& input, Document& theDocument){
   
   //current char
   char current{'\0'};
-  for(size_t prevIndex{0}, index{0};;index++){
+  for(size_t startIndex{0}, endIndex{0}, index{0};;index++){
 
     char& current{input[index]};
 
 
     //asume we are getting a new segment
-    std::cout << current<<"=" << std::flush;
-    // break;
+    // std::cout << current<<"=" << std::flush;
+
 
     switch(current){
       case '\n':
@@ -92,12 +96,13 @@ void parser0(std::string& input, Document& theDocument){
         if(gettingNewFlags){
           segmentChange=true; 
           gettingNewFlags=false;
+        }else{
+          endIndex=index+1;
         }
 
       
     }
 
-    
     //if we are getting new flags, we are already onto another segment
     if(segmentChange){
 
@@ -105,7 +110,9 @@ void parser0(std::string& input, Document& theDocument){
 
       //==CHECK ALL FLAGS AND SET THEM APPROPRIATLY
 
-      if(asterisksSoFar+caretsSoFar+underscoresSoFar+tildesSoFar==0){
+      int charsAmount=asterisksSoFar+caretsSoFar+underscoresSoFar+tildesSoFar+newLinesSoFar;
+
+      if(charsAmount-newLinesSoFar==0){
         if(newLinesSoFar==1){
           //only 1 newline? ignore it
           input[index-1]=' ';
@@ -115,36 +122,27 @@ void parser0(std::string& input, Document& theDocument){
           //continue, no new segments
           continue;
       
-        //more than 1? new paragraph segment (more than 1 is implied by segmentChange==true and no onether characters being found)
+        //more than 1? new paragraph segment (more than 1 is implied by segmentChange==true and no ather characters being found)
         }else{
           currentFlags.lineBreakLevel=1;
           newLinesSoFar=0;
+          index++;
       
         }
       }
 
-      output.back().contents=input.substr(prevIndex, index-prevIndex);
-      prevIndex=index;
+      output.back().contents=input.substr(startIndex, endIndex-startIndex);
+      startIndex=index-1;
       output.push_back(currentFlags);
 
     }      
 
     if(reachedTheEnd){
-      output.back().contents=input.substr(prevIndex, index-prevIndex);
+      output.back().contents=input.substr(startIndex, endIndex-startIndex);
       return;
     }
 
-
-
-
-
-
   }
-
-
-
-
-  
 
 }
 
