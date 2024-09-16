@@ -18,11 +18,96 @@ If not, see <https://www.gnu.org/licenses/>.
 #include "parsers.hxx"
 #include <cstring>
 #include <iostream>
+#include <unordered_map>
 
 //checks if the char is any of the given chars
 bool isAnyOf(const char&, const char*);
 
+std::pair<std::string, size_t> getClosest(std::unordered_map<std::string, size_t>);
+
 void parser0(std::string& input, Document& theDocument){
+
+  //flag is probably not the best name as flag would be the thing that this indicates
+  //is unordered_map the best in this case performance wise? Perhaps a std::set of std::pair?
+  std::unordered_map<std::string, size_t> nextFlag={
+  {"\n", 0},
+  {"\n\n", 0},
+  // {"*", 0},
+  // {"**", 0},
+  // {"_", 0},
+  // {"__", 0},
+  // {"~", 0},
+  // {"~~", 0},
+  // {"^", 0},
+  // {"", 0},
+  // {"", 0},
+  // {"", 0},
+  // {"", 0},
+  // {"", 0},
+  };
+
+  //get all the new(initial) values
+  for(auto& [pattern, pos]: nextFlag){
+    pos=input.find(pattern);
+  }
+
+
+  std::pair<std::string, size_t> currentFlag;
+
+  
+  bool reachedTheEnd{false};
+  for(size_t index{0};;){
+
+    //reset the current flag indicator
+    currentFlag={"", std::string::npos};
+    
+    //currentFlag is previous flag at this point
+    nextFlag[currentFlag.first]=input.find(currentFlag.first, index);
+
+    currentFlag=getClosest(nextFlag);
+
+    
+    //if we dont have a flag indicator, we have reached the end
+    if(currentFlag.second==std::string::npos){
+
+      //add the last string
+      break;
+    }
+
+    //perhaps enums would have been better :/
+    if(currentFlag.first=="\n"){
+      
+    
+    
+    }else if(currentFlag.first=="\n\n"){
+
+    }
+
+
+  }
+
+    
+  
+}
+
+
+
+std::pair<std::string, size_t> getClosest(std::unordered_map<std::string, size_t> all){
+
+  std::pair<std::string, size_t> closest;
+
+  for(auto& [pattern, pos]: all){
+    if(pos<=closest.second){
+      //longer patterns get priority
+      closest={pattern, pos};
+    }
+  }
+
+  return closest;
+}
+
+
+void parser0_old(std::string& input, Document& theDocument){
   auto& output=theDocument.contents;
 
 
