@@ -54,8 +54,12 @@ struct TextBlock{
     int lineBreakLevel{0};
     
     bool isBold{false};
-    
     bool isEmphatic{false};
+    bool isUnderlined{false};
+    bool isItalic{false};
+    bool isSubScript{false};
+    bool isSuperScript{false};
+    bool isCrossedOut{false};//strike-through
     
     //TBD
     //differnt iszes should be on different lines?
