@@ -25,7 +25,76 @@ bool isAnyOf(const char&, const char*);
 
 std::pair<std::string, size_t> getClosest(std::unordered_map<std::string, size_t>);
 
+
+enum Indicator{newLine, doubleNewLine};
+
 void parser0(std::string& input, Document& theDocument){
+
+  std::vector<std::pair<Indicator, size_t>> foundIndicators;
+
+  std::unordered_map<Indicator, size_t> nextIndicators={
+    {newLine, 0},
+    {doubleNewLine, 0},
+  };
+
+  std::vector<Indicator> indicatorsToCheck={
+  newLine, doubleNewLine
+  
+  };
+  
+  //get all the initial values
+  for(auto& [indicator, pos]: nextIndicators){
+    pos=input.find(indicator);
+  }
+
+  size_t index{0};
+
+  for(;;){
+
+    //update indicators that need to be updated
+    for(auto& indicator : indicatorsToCheck){
+      switch(indicator){
+        case newLine:
+          nextIndicators[indicator]=input.find('\n', index);
+          break;
+        case doubleNewLine:
+          nextIndicators[indicator]=input.find("\n\n", index);
+          break;
+        default:
+          std::cerr << "how did we even get here?\n";
+          break;
+      }
+    }
+    indicatorsToCheck.clear();
+
+    //== ALL BELOW: if newlines are the closest
+    indicatorsToCheck.push_back(newLine);
+    indicatorsToCheck.push_back(doubleNewLine);
+    
+    //if the closest doesnt exist ==> no idicators exits ==> we are at the end
+    if(nextIndicators[newLine]==std::string::npos){
+      break;
+    }
+
+    //prioritize double newLines
+    if(nextIndicators[doubleNewLine]==nextIndicators[newLine]){
+      foundIndicators.push_back({doubleNewLine, nextIndicators[doubleNewLine]});
+      index=nextIndicators[doubleNewLine]+2; //double newline is 2 characters
+    }else{
+      foundIndicators.push_back({newLine, nextIndicators[newLine]});
+      index=nextIndicators[newLine]+1; //newline is 1 character
+    }
+    
+  }
+
+  for(auto& indicator : foundIndicators){
+    std::cout << indicator.first << " == " << indicator.second << "\n";
+  }
+
+
+}
+
+void parser0_old2(std::string& input, Document& theDocument){
 
   //flag is probably not the best name as flag would be the thing that this indicates
   //is unordered_map the best in this case performance wise? Perhaps a std::set of std::pair?
