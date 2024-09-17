@@ -47,21 +47,22 @@ bool convertToMarkdown(Document& document, std::string& output){
     
     output+=segment.contents;
 
+    //make sure all of these are in reverse order
 
-    if(segment.isBold)
-      output+="**";
-    if(segment.isItalic)
-      output+="*";
-    if(segment.isCrossedOut)
-      output+="~~";
-    if(segment.isEmphatic)
-      output+="";//NOTE THIS SHOULD BE CUSTOM
-    if(segment.isSubScript)
-      output+="~";
-    if(segment.isSuperScript)
-      output+="^";
     if(segment.isUnderlined)
       output+="";//no underlines in markdown :/
+    if(segment.isSuperScript)
+      output+="^";
+    if(segment.isSubScript)
+      output+="~";
+    if(segment.isEmphatic)
+      output+="";//NOTE THIS SHOULD BE CUSTOM
+    if(segment.isCrossedOut)
+      output+="~~";
+    if(segment.isItalic)
+      output+="*";
+    if(segment.isBold)
+      output+="**";
   
   }  
 

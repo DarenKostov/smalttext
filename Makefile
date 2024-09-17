@@ -53,7 +53,7 @@ bin/parser-0.o: src/parsers/parser-0.cxx
 	$(CXX) $(CXXFLAGS) src/parsers/parser-0.cxx -c -o bin/parser-0.o
 
 bin/markdown.o: src/exporters/markdown.cxx
-	@echo PARSER 0:
+	@echo MARKDOWN EXPORTER:
 	$(CXX) $(CXXFLAGS) src/exporters/markdown.cxx -c -o bin/markdown.o
 
 

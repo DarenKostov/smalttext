@@ -172,12 +172,16 @@ void parser0(std::string& input, Document& theDocument){
     }
   }
 
-  // for(auto& [indicator, position] : foundIndicators){
-  //    std::cout << indicator << " == " << position << "\n";
-    
-  // }
-  // return;
 
+  /* NOTE
+
+    if it cases problems remove the
+    "//no need for empty segments"
+    and uncomment the
+    "// //remove all empty segments"
+
+  */
+  
   size_t prevIndex{0};
   TextBlock flags;
   output.push_back(flags);
@@ -203,6 +207,10 @@ void parser0(std::string& input, Document& theDocument){
       case asterisk:
         std::cout << "* == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
+        //no need for empty segments
+        if(output.back().contents.size()==0){
+          output.pop_back();
+        }
         flags.isBold=!flags.isBold;
         output.push_back(flags);
         prevIndex=position+1;
@@ -212,6 +220,10 @@ void parser0(std::string& input, Document& theDocument){
       case doubleAsterisk:
         std::cout << "** == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
+        //no need for empty segments
+        if(output.back().contents.size()==0){
+          output.pop_back();
+        }
         flags.isEmphatic=!flags.isEmphatic;
         output.push_back(flags);
         prevIndex=position+2;
@@ -221,6 +233,10 @@ void parser0(std::string& input, Document& theDocument){
       case underScore:
         std::cout << "_ == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
+        //no need for empty segments
+        if(output.back().contents.size()==0){
+          output.pop_back();
+        }
         flags.isItalic=!flags.isItalic;
         output.push_back(flags);
         prevIndex=position+1;
@@ -230,6 +246,10 @@ void parser0(std::string& input, Document& theDocument){
       case doubleUnderScore:
         std::cout << "__ == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
+        //no need for empty segments
+        if(output.back().contents.size()==0){
+          output.pop_back();
+        }
         flags.isUnderlined=!flags.isUnderlined;
         output.push_back(flags);
         prevIndex=position+2;
@@ -239,6 +259,10 @@ void parser0(std::string& input, Document& theDocument){
       case tilde:
         std::cout << "~ == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
+        //no need for empty segments
+        if(output.back().contents.size()==0){
+          output.pop_back();
+        }
         flags.isSubScript=!flags.isSubScript;
         output.push_back(flags);
         prevIndex=position+1;
@@ -248,6 +272,10 @@ void parser0(std::string& input, Document& theDocument){
       case doubleTilde:
         std::cout << "~~ == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
+        //no need for empty segments
+        if(output.back().contents.size()==0){
+          output.pop_back();
+        }
         flags.isCrossedOut=!flags.isCrossedOut;
         output.push_back(flags);
         prevIndex=position+2;
@@ -257,6 +285,10 @@ void parser0(std::string& input, Document& theDocument){
       case caret:
         std::cout << "^ == " << position << "\n";
         output.back().contents=input.substr(prevIndex, position-prevIndex);
+        //no need for empty segments
+        if(output.back().contents.size()==0){
+          output.pop_back();
+        }
         flags.isSuperScript=!flags.isSuperScript;
         output.push_back(flags);
         prevIndex=position+1;
@@ -267,6 +299,19 @@ void parser0(std::string& input, Document& theDocument){
         break;
     }
   }
+
+  
+  // //remove all empty segments
+  // for(auto iterator{output.begin()}; iterator!=output.end();){
+  //   //no need for empty segments
+  //   if(iterator->contents.size()==0){
+  //     iterator=output.erase(iterator);
+  //   }else{
+  //     iterator++;
+  //   }
+  // }
+
+
   //dont forget the last one, there is no indicator for it... unless there actually is an indicator
   if(prevIndex!=input.size()-1){
     output.back().contents=input.substr(prevIndex);

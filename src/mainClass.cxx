@@ -62,12 +62,12 @@ void MainClass::startProgram(){
     return;
   }
 
-  // std::string output{""};
+  std::string output{""};
 
-  // convertToMarkdown(*currentDocument, output);
+  convertToMarkdown(*currentDocument, output);
   
-  // std::cout << output << "\n";
-  // return;
+  std::cout << output << "\n";
+  return;
 
   std::cout << "New document:\n";
   std::cout << "Title:" << currentDocument->title << "\n";
