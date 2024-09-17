@@ -6,7 +6,7 @@ CXX= g++
 CXXFLAGS= -std=c++20 -lstdc++fs -g
 SFMLFLAGS= -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
 OBJFILES= bin/main.o bin/licence.o bin/mainClass.o bin/mainDraw.o bin/mainUpdate.o bin/mainActions.o
-PARSERFILES= bin/metaparser-0.o bin/parser-0.o
+PARSERFILES= bin/metaparser-0.o bin/parser-0.o bin/markdown.o
 TARGET= bin/TEMPLATE
 
 
@@ -51,6 +51,10 @@ bin/metaparser-0.o: src/meta-parsers/metaparser-0.cxx
 bin/parser-0.o: src/parsers/parser-0.cxx
 	@echo PARSER 0:
 	$(CXX) $(CXXFLAGS) src/parsers/parser-0.cxx -c -o bin/parser-0.o
+
+bin/markdown.o: src/exporters/markdown.cxx
+	@echo PARSER 0:
+	$(CXX) $(CXXFLAGS) src/exporters/markdown.cxx -c -o bin/markdown.o
 
 
 clean:

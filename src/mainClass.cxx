@@ -19,6 +19,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include "documents-and-texts/document.hxx"
 #include "meta-parsers/metaparsers.hxx"
 #include "parsers/parsers.hxx"
+#include "exporters/exporters.hxx"
 #include <charconv>
 #include <iostream>
 #include <regex>
@@ -60,6 +61,13 @@ void MainClass::startProgram(){
   if(currentDocument==nullptr){
     return;
   }
+
+  // std::string output{""};
+
+  // convertToMarkdown(*currentDocument, output);
+  
+  // std::cout << output << "\n";
+  // return;
 
   std::cout << "New document:\n";
   std::cout << "Title:" << currentDocument->title << "\n";
@@ -186,6 +194,7 @@ std::tuple<bool, int, int, int> parseVersion(std::string in){
     int parser{0};
     int iteration{0};
 
+    //according to the regex these should be numbers, so maybe no need for try & catch?
     try{
       metaParser=std::stoi(match.str(1));
       parser=std::stoi(match.str(2));
