@@ -72,14 +72,8 @@ MainClass::MainClass(const std::filesystem::path& projectPath){
   workingPath=projectPath;
   currentDocument=nullptr;
   
-  // loadFile(workingPath);
-  // loadFileMeta(workingPath);
   loadFilesIntoLibrary(workingPath);
 
-  // for(auto& [title, document]: documents){
-  //   loadFileContents(&document);
-  //   break;
-  // }
   
   // return;
 
@@ -257,33 +251,15 @@ bool MainClass::loadFileContents(Document* document){
 
 void MainClass::loadFilesIntoLibrary(const std::filesystem::path& initPath){
 
-  //==get the meta stuff
-  
-  //start the queue with the first directory/file
-  std::queue<std::filesystem::directory_entry> paths;
-  paths.push(std::filesystem::directory_entry(initPath));
-  
-  //loop until we have paths in "paths"
-  for(auto current=paths.front(); paths.pop(), !paths.empty(); current=paths.front()){
-
-    if(current.is_regular_file()){
-      //if (normal) file, add it as new document
-      loadFileMeta(current.path());
-
-    }else if(current.is_directory()){
-      //if not directory, iterate through it
-      for (auto& entry : std::filesystem::recursive_directory_iterator(current.path())){
-          paths.push(entry);
-      }
-
-    }else{
-      // if not file/directory... ignore
-      std::cerr << "ignoring: " << current.path() << "\n";
+  //get the meta stuff
+  for (auto& entry : std::filesystem::recursive_directory_iterator(initPath)){
+    // std::cout << "[[" << entry.path() << "\n";
+    if(entry.is_regular_file()){
+      loadFileMeta(entry.path());
     }
   }
 
-  //==get the content stuff
-
+  //get the content stuff
   for(auto& [title, document] : documents){
     loadFileContents(&document);
   }
