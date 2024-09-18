@@ -24,6 +24,7 @@ If not, see <https://www.gnu.org/licenses/>.
 enum Indicator{newLine, doubleNewLine, asterisk, doubleAsterisk, underScore, doubleUnderScore, caret, tilde, doubleTilde};
 
 void parser0(std::string& input, Document& theDocument){
+  
   auto& output=theDocument.contents;
 
   std::vector<std::pair<Indicator, size_t>> foundIndicators;
@@ -319,5 +320,8 @@ void parser0(std::string& input, Document& theDocument){
     output.pop_back();
   }
 
+  // std::cout << "internally ==" << output.size();
+
+  
 }
 

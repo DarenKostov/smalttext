@@ -112,8 +112,7 @@ bool metaParser0Bypass(std::istream& stream){
   }
 
   for(int i{0}; i<5; i++){
-  //this will break if more than 9999 chars per line
-    stream.ignore(9999, '\n');  
+    stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  
   }
 
   return true;

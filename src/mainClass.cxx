@@ -74,16 +74,17 @@ MainClass::MainClass(const std::filesystem::path& projectPath){
   // loadFile(workingPath);
   loadFileMeta(workingPath);
 
-  // return;
 
   for(auto& [title, document]: documents){
     loadFileContents(&document);
     break;
   }
   
+  // return;
+
   for(auto& [title, document]: documents){
     currentDocument=&document;
-    // std::cout << document.title;
+    // std::cout << "title: " << document.title << "\n";
     break;
   }
 
@@ -188,6 +189,7 @@ bool MainClass::loadFileMeta(const std::filesystem::path& path){
     return false;
   }
 
+  newDocument.filePath=path;
   documents[newDocument.title]=newDocument;
 
   return false;
@@ -207,7 +209,8 @@ bool MainClass::loadFileContents(Document* document){
 
   
   //dont care about version
-  fileIn.ignore(9999, '\n');
+  fileIn.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  
+
   //dont care about meta stuff either
   switch(metaParserVersion){
     case 0:
@@ -239,6 +242,7 @@ bool MainClass::loadFileContents(Document* document){
     case 0:
       // *&  :/
       parser0(contentsRaw, *document);
+      // std::cout << "externally ==" << document->contents.size();
       break;
     default:
       std::cerr << "unavaliable parser version: " << parserVersion << "\n";
