@@ -22,6 +22,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include "exporters/exporters.hxx"
 #include <charconv>
 #include <iostream>
+#include <queue>
 #include <regex>
 #include <unistd.h>
 #include <stdlib.h>
@@ -72,19 +73,19 @@ MainClass::MainClass(const std::filesystem::path& projectPath){
   currentDocument=nullptr;
   
   // loadFile(workingPath);
-  loadFileMeta(workingPath);
+  // loadFileMeta(workingPath);
+  loadFilesIntoLibrary(workingPath);
 
-
-  for(auto& [title, document]: documents){
-    loadFileContents(&document);
-    break;
-  }
+  // for(auto& [title, document]: documents){
+  //   loadFileContents(&document);
+  //   break;
+  // }
   
   // return;
 
   for(auto& [title, document]: documents){
     currentDocument=&document;
-    // std::cout << "title: " << document.title << "\n";
+    std::cout << "title: " << document.title << "\n";
     break;
   }
 
@@ -251,6 +252,41 @@ bool MainClass::loadFileContents(Document* document){
 
 
   return true;
+
+}
+
+void MainClass::loadFilesIntoLibrary(const std::filesystem::path& initPath){
+
+  //==get the meta stuff
+  
+  //start the queue with the first directory/file
+  std::queue<std::filesystem::directory_entry> paths;
+  paths.push(std::filesystem::directory_entry(initPath));
+  
+  //loop until we have paths in "paths"
+  for(auto current=paths.front(); paths.pop(), !paths.empty(); current=paths.front()){
+
+    if(current.is_regular_file()){
+      //if (normal) file, add it as new document
+      loadFileMeta(current.path());
+
+    }else if(current.is_directory()){
+      //if not directory, iterate through it
+      for (auto& entry : std::filesystem::recursive_directory_iterator(current.path())){
+          paths.push(entry);
+      }
+
+    }else{
+      // if not file/directory... ignore
+      std::cerr << "ignoring: " << current.path() << "\n";
+    }
+  }
+
+  //==get the content stuff
+
+  for(auto& [title, document] : documents){
+    loadFileContents(&document);
+  }
 
 }
 

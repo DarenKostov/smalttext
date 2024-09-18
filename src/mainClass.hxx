@@ -70,7 +70,7 @@ class MainClass{
     //this draws he program, like update but for drawing
     void draw();
 
-    //loads all .smalttext files in the directory (resursive)
+    //loads all .smalttext files in the directory (resursive), can be just a path to a single file!
     void loadFilesIntoLibrary(const std::filesystem::path&);
     
     //loads just the meta stuff, loads it in to the library, meaning in makes a new document (tries to not cause duplicates)
