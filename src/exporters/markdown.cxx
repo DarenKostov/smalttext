@@ -47,7 +47,7 @@ bool convertToMarkdown(Document& document, std::string& output){
     
     output+=segment.contents;
 
-    //make sure all of these are in reverse order
+    // vvvvv make sure all of these are in reverse order vvvvv
 
     if(segment.isUnderlined)
       output+="";//no underlines in markdown :/

@@ -23,4 +23,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 //destructive, returns document info and ends at contents
 bool metaParser0(std::istream&, Document&);
+//bypasses the meta stuff
+bool metaParserBypass0(std::istream&);
+
 

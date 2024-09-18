@@ -41,7 +41,11 @@ class MainClass{
     sf::View mainView;
     sf::Clock clock;
 
-    
+    //font stuff
+    enum typefaceEnum {Sans, Serif, Mono};
+    enum fontFlagsEnum {Regular, Bold, Italic, Bold_Italic};
+    std::unordered_map<typefaceEnum, std::unordered_map<fontFlagsEnum, sf::Font>> font;
+    typefaceEnum chosenTypeFace{Serif};
     
   public:
 
@@ -68,8 +72,14 @@ class MainClass{
 
 
     //TODO return error state
-    //loads a file into the library
+    //loads a file into the library, DONT use, first load all metas then the contents, in that order
     void loadFile(const std::filesystem::path&);
+
+    //loads just the meta stuff, loads it in to the library, meaning in makes a new document (tries to not cause duplicates)
+    bool loadFileMeta(const std::filesystem::path&);
+
+    //loads just the contents, MAKE SURE you have loaded the meta stuff (how else would you have a document either way)
+    bool loadFileContents(Document*);
 
    
 };

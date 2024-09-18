@@ -36,6 +36,38 @@ MainClass::MainClass(const std::filesystem::path& projectPath){
   // window.setView(mainView);
   // window.setVerticalSyncEnabled(true);
 
+
+  //loadding fonts
+    
+  if (!(
+    font[Mono][Regular].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Regular.ttf") &&
+    font[Mono][Bold].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Bold.ttf") &&
+    font[Mono][Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-Italic.ttf") &&
+    font[Mono][Bold_Italic].loadFromFile("/usr/share/fonts/liberation/LiberationMono-BoldItalic.ttf")
+    )) {
+    std::cout << "error loading the mono font\n";
+  }
+  if (!(
+    font[Serif][Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Regular.ttf") &&
+    font[Serif][Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Bold.ttf") &&
+    font[Serif][Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-Italic.ttf") &&
+    font[Serif][Bold_Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSerif-BoldItalic.ttf")
+    )) {
+    std::cout << "error loading the serif font\n";
+  }
+  if (!(
+    font[Sans][Regular].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Regular.ttf") &&
+    font[Sans][Bold].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Bold.ttf") &&
+    font[Sans][Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-Italic.ttf") &&
+    font[Sans][Bold_Italic].loadFromFile("/usr/share/fonts/liberation/LiberationSans-BoldItalic.ttf")
+    )) {
+    std::cout << "error loading the sans font\n";
+  }
+
+  
+
+
+
   workingPath=projectPath;
   currentDocument=nullptr;
   
@@ -104,6 +136,69 @@ void MainClass::startProgram(){
 }
 
 
+bool MainClass::loadFileMeta(const std::filesystem::path& path){
+  
+  //TODO resolve collisions
+  
+}
+
+bool MainClass::loadFileContents(Document* document){
+
+  bool success{true};
+  std::string contentsRaw{""};
+  std::ifstream fileIn;
+  fileIn.open(document->filePath);
+
+  int metaParserVersion{0};
+  int parserVersion{0};
+  int dontCare{0};
+  std::tie(metaParserVersion, parserVersion, dontCare)=document->version;
+
+  
+  //dont care about version
+  fileIn.ignore(9999, '\n');
+  //dont care about meta stuff either
+  switch(metaParserVersion){
+    case 0:
+      success=metaParserBypass0(fileIn);
+      break;
+    default:
+      std::cerr << "unknown meta parser (bypass) version? how.\n";
+      std::cerr << "version: " << metaParserVersion << "\n";
+      return false;
+    }
+
+  
+  if(!success){
+    fileIn.close();
+    std::cerr << "some sort of problem occured while bypassing the meta data stuff";
+    return false;
+  }
+
+
+  //get the whole contents because strings are faster than streams in this case
+  std::getline(fileIn, contentsRaw, '\0');
+  fileIn.close();
+
+
+  //clear the contents, we will be filling them in the next step
+  document->contents.clear();
+
+  switch(parserVersion){
+    case 0:
+      // *&  :/
+      parser0(contentsRaw, *document);
+      break;
+    default:
+      std::cerr << "unavaliable parser version: " << parserVersion << "\n";
+      return false;
+  }
+
+
+  return true;
+
+}
+
 //TODO make refresh contents
 void MainClass::loadFile(const std::filesystem::path& path){
 
@@ -118,16 +213,15 @@ void MainClass::loadFile(const std::filesystem::path& path){
   
 
   
-  //TODO Parse Version
+  //Parse Version
   int metaParserVersion{0};
   int parserVersion{0};
   int dontCare{0};
-  
-
   std::string versionRaw{""};
   std::getline(fileIn, versionRaw, '\n');
   
   std::tie(success, metaParserVersion, parserVersion, dontCare)=parseVersion(versionRaw);
+  newDocument.version={metaParserVersion, parserVersion, dontCare};
   
 
   //no success, no file
@@ -162,8 +256,6 @@ void MainClass::loadFile(const std::filesystem::path& path){
   std::getline(fileIn, contentsRaw, '\0');
   fileIn.close();
 
-  //TODO resolve collisions
-  documents[newDocument.title]=newDocument;
 
   //should I use array with function pointers?
   switch(parserVersion){

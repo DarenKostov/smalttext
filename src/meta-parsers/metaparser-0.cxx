@@ -30,7 +30,7 @@ bool metaParser0(std::istream& stream, Document& newDocument){
 
   if(stream.bad()){
     return false;
-    std::cout << "bad stream\n";
+    std::cerr << "bad stream\n";
   }
 
   
@@ -104,3 +104,18 @@ bool metaParser0(std::istream& stream, Document& newDocument){
 
 }
 
+bool metaParser0Bypass(std::istream& stream){
+
+  if(stream.bad()){
+    return false;
+    std::cerr << "bad stream\n";
+  }
+
+  for(int i{0}; i<5; i++){
+  //this will break if more than 9999 chars per line
+    stream.ignore(9999, '\n');  
+  }
+
+  return true;
+
+}

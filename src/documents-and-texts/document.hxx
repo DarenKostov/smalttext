@@ -18,6 +18,7 @@ If not, see <https://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <filesystem>
 #include <string>
 #include <vector>
 #include "textBlock.hxx"
@@ -30,10 +31,12 @@ struct Document{
     std::string title;
     std::string description;
     std::vector<TextBlock> contents;
-    int version;
+    std::tuple<int, int, int> version;
     
     //formatting basically
     TextBlock preSetting;
 
+    //the file path of the source
+    const std::filesystem::path filePath;
 };
 
