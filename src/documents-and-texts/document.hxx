@@ -37,6 +37,6 @@ struct Document{
     TextBlock preSetting;
 
     //the file path of the source
-    const std::filesystem::path filePath;
+    std::filesystem::path filePath;
 };
 

@@ -71,10 +71,15 @@ MainClass::MainClass(const std::filesystem::path& projectPath){
   workingPath=projectPath;
   currentDocument=nullptr;
   
-  loadFile(workingPath);
+  // loadFile(workingPath);
+  loadFileMeta(workingPath);
 
   // return;
 
+  for(auto& [title, document]: documents){
+    loadFileContents(&document);
+    break;
+  }
   
   for(auto& [title, document]: documents){
     currentDocument=&document;
@@ -138,8 +143,54 @@ void MainClass::startProgram(){
 
 bool MainClass::loadFileMeta(const std::filesystem::path& path){
   
-  //TODO resolve collisions
+  bool success{true};
+
+  //dont worry, performance hit of copying should be minimal, this function does not process actual contents
+  Document newDocument;
   
+  std::ifstream fileIn;
+  fileIn.open(path);
+  
+  //Parse Version
+  int metaParserVersion{0};
+  int parserVersion{0};
+  int dontCare{0};
+  std::string versionRaw{""};
+  std::getline(fileIn, versionRaw, '\n');
+  
+  std::tie(success, metaParserVersion, parserVersion, dontCare)=parseVersion(versionRaw);
+  newDocument.version={metaParserVersion, parserVersion, dontCare};
+  
+
+  //no success, no file
+  if(!success){
+    fileIn.close();
+    if(metaParserVersion==0){
+      std::cerr << "are you sure this is a smalttext file?\n";
+    }else{
+      std::cerr << "version format is wrong\n";
+    }
+    return false;
+  }
+
+  //should I use array with function pointers?
+  switch(metaParserVersion){
+    case 0:
+      success=metaParser0(fileIn, newDocument);
+      break;
+    default:
+      std::cerr << "unavaliable meta parser version\n";
+      return false;
+  }
+
+  if(documents.find(newDocument.title)!=documents.end()){
+    std::cerr << "duplicate title will not add \"" << newDocument.title << "\" again\n"; 
+    return false;
+  }
+
+  documents[newDocument.title]=newDocument;
+
+  return false;
 }
 
 bool MainClass::loadFileContents(Document* document){
@@ -160,7 +211,7 @@ bool MainClass::loadFileContents(Document* document){
   //dont care about meta stuff either
   switch(metaParserVersion){
     case 0:
-      success=metaParserBypass0(fileIn);
+      success=metaParser0Bypass(fileIn);
       break;
     default:
       std::cerr << "unknown meta parser (bypass) version? how.\n";
@@ -272,6 +323,7 @@ void MainClass::loadFile(const std::filesystem::path& path){
 
 std::tuple<bool, int, int, int> parseVersion(std::string in){
 
+  //maybe save this pattern as a constant?
   std::regex pattern(R"(<SMALTTEXT:([0-9]+)\.([0-9]+)\.([0-9]+)>)");
   std::smatch match;
 
