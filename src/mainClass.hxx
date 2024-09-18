@@ -70,11 +70,9 @@ class MainClass{
     //this draws he program, like update but for drawing
     void draw();
 
-
-    //TODO return error state
-    //loads a file into the library, DONT use, first load all metas then the contents, in that order
-    void loadFile(const std::filesystem::path&);
-
+    //loads all .smalttext files in the directory (resursive)
+    void loadFilesIntoLibrary(const std::filesystem::path&);
+    
     //loads just the meta stuff, loads it in to the library, meaning in makes a new document (tries to not cause duplicates)
     bool loadFileMeta(const std::filesystem::path&);
 
