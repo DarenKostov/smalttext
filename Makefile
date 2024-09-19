@@ -5,7 +5,7 @@ CXX= g++
 # CXXFLAGS= -std=c++20 -lstdc++fs
 CXXFLAGS= -std=c++20 -lstdc++fs -g
 SFMLFLAGS= -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
-OBJFILES= bin/main.o bin/licence.o bin/mainClass.o bin/mainDraw.o bin/mainUpdate.o bin/mainActions.o
+OBJFILES= bin/main.o bin/licence.o bin/mainClass.o bin/mainClassLoadStuff.o bin/mainDraw.o bin/mainUpdate.o bin/mainActions.o
 PARSERFILES= bin/metaparser-0.o bin/parser-0.o bin/markdown.o
 TARGET= bin/TEMPLATE
 
@@ -30,6 +30,10 @@ bin/licence.o: src/licence.cxx
 bin/mainClass.o: src/mainClass.cxx src/mainClass.hxx
 	@echo MAIN CLASS:
 	$(CXX) $(CXXFLAGS) src/mainClass.cxx -c -o bin/mainClass.o
+
+bin/mainClassLoadStuff.o: src/mainClassLoadStuff.cxx src/mainClass.hxx
+	@echo MAIN LOAD STUFF:
+	$(CXX) $(CXXFLAGS) src/mainClassLoadStuff.cxx -c -o bin/mainClassLoadStuff.o
 
 bin/mainDraw.o: src/mainDraw.cxx src/mainClass.hxx
 	@echo MAIN DRAW:
